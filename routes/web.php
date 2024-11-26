@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\Admin\UserController;
+
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -21,6 +23,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
+});
+
+Route::middleware(['auth', 'can:admin-access'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('users', UserController::class);
 });
 
 // Ruta de prueba para verificar la configuración de Mailtrap en Laravel

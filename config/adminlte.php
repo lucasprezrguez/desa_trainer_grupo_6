@@ -318,6 +318,7 @@ return [
         ],
 
         // Sidebar items:
+        // Sidebar items:
         [
             'type' => 'sidebar-menu-search',
             'text' => 'search',
@@ -326,6 +327,13 @@ return [
             'text' => 'Dashboard',
             'url' => 'admin/dashboard',
             'icon' => 'fas fa-fw fa-home',
+        ],
+        [
+            'text' => 'Usuarios',
+            'url' => 'admin/users',
+            'icon' => 'fas fa-fw fa-users',
+            'label_color' => 'primary', // Opcional: color de etiqueta.
+                                         // Opcional: Control de permisos.
         ],
         [
             'text' => 'pages',
