@@ -41,21 +41,28 @@ class UserController extends Controller
         return view('admin.users.edit', compact('user'));
     }
 
-    public function update(Request $request, User $user)
-    {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-        ]);
+    public function update(Request $request, $id)
+{
+    $user = User::findOrFail($id);
 
-        $user->update($request->all());
+    // Validar los datos entrantes
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255|unique:users,email,' . $id,
+        'password' => 'nullable|string|min:8|confirmed', // Permite que sea opcional
+    ]);
 
-        return redirect()->route('admin.users.index')->with('success', 'Usuario actualizado con éxito.');
+    // Actualizar los campos básicos
+    $user->name = $validatedData['name'];
+    $user->email = $validatedData['email'];
+
+    // Solo actualizar la contraseña si se proporciona
+    if (!empty($validatedData['password'])) {
+        $user->password = bcrypt($validatedData['password']);
     }
 
-    public function destroy(User $user)
-    {
-        $user->delete();
-        return redirect()->route('admin.users.index')->with('success', 'Usuario eliminado con éxito.');
-    }
+    $user->save();
+
+    return redirect()->route('admin.users.index')->with('success', 'Usuario actualizado correctamente.');
+}
 }

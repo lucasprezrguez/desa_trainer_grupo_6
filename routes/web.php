@@ -4,11 +4,11 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Admin\UserController;
 
-
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// Grupo de rutas para usuarios autenticados y verificación de sesión
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -19,15 +19,20 @@ Route::middleware([
     })->name('dashboard');
 });
 
-Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
+// Grupo de rutas para el panel de administración
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    // Ruta al dashboard de administración
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
-    })->name('admin.dashboard');
+    })->name('dashboard');
+
+    // CRUD de usuarios usando resource
+    Route::resource('users', UserController::class);
+
+    // Ruta para la vista personalizada 'admin.users.delete'
+    Route::get('users/{user}/delete', [UserController::class, 'delete'])->name('users.delete');
 });
 
-Route::middleware(['auth', 'can:admin-access'])->prefix('admin')->name('admin.')->group(function () {
-    Route::resource('users', UserController::class);
-});
 
 // Ruta de prueba para verificar la configuración de Mailtrap en Laravel
 // ----------------------------------------------------------------------

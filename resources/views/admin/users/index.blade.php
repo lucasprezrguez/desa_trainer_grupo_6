@@ -3,11 +3,13 @@
 @section('title', 'Usuarios')
 
 @section('content_header')
-    <h1>Lista de Usuarios</h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Lista de Usuarios</h1>
+        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">Crear Usuario</a>
+    </div>
 @stop
 
 @section('content')
-    <a href="{{ route('admin.users.create') }}" class="btn btn-primary mb-3">Crear Usuario</a>
 
     @if(session('success'))
         <div class="alert alert-success">
