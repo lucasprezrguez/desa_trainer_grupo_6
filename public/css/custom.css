@@ -1,0 +1,19 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    background-color: #009140 !important;
+}
+.navbar, .navbar a, .navbar .nav-link {
+    color: #fff !important;
+}
+
+.nav-item .fa-power-off {
+    color: #fff !important;
+}
+
+.nav-item .nav-link .logout-text {
+    display: none;
+}
