@@ -3,30 +3,28 @@
 @section('title', 'Gestión de Usuarios')
 
 @section('content_header')
-    <div class="d-flex justify-content-between align-items-center">
-        <h1>Lista de Usuarios</h1>
-        <button class="btn btn-success" data-toggle="modal" data-target="#createUserModal">Crear Usuario</button>
+    <div class="d-flex align-items-center justify-content-between" style="gap: 10px;">
+        <div class="d-flex align-items-center" style="gap: 10px;">
+            <h1>Lista de Usuarios</h1>
+            <button class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#createUserModal">Añadir Nuevo</button>
+        </div>
+        <div class="search-bar">
+            <input type="text" class="search form-control" placeholder="Buscar...">
+        </div>
     </div>
 @stop
 
 @section('content')
-    @if(session('success'))
-        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%);" data-delay="5000">
-            <div class="d-flex">
-                <div class="toast-body">
-                    {{ session('success') }}
-                </div>
-            </div>
-        </div>
-    @endif
-
-    <table class="table table-striped shadow-sm bg-white rounded">
+    <table class="table shadow-sm bg-white rounded results">
         <thead>
             <tr>
-                <th>#</th>
-                <th>Nombre</th>
-                <th>Correo Electrónico</th>
-                <th>Acciones</th>
+                <th style="width: 5%;">#</th>
+                <th style="width: 40%;">Nombre</th>
+                <th style="width: 45%;">Correo Electrónico</th>
+                <th style="width: 10%;">Acciones</th>
+            </tr>
+            <tr class="warning no-result" style="display:none;">
+                <td colspan="4">No hay resultados.</td>
             </tr>
         </thead>
         <tbody>
@@ -58,7 +56,7 @@
                         @include('admin.users.create')
                     </div>
                     <div class="modal-footer d-flex justify-content-between">
-                        <button type="submit" class="btn btn-success">Guardar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
                     </div>
                 </form>
             </div>
@@ -81,8 +79,8 @@
                             @include('admin.users.edit', ['user' => $user])
                         </div>
                         <div class="modal-footer d-flex justify-content-between">
-                            <button type="button" class="btn btn-success" onclick="document.getElementById('edit-form-{{ $user->id }}').submit();">Guardar</button>
-                            <button type="button" class="btn btn-danger" onclick="deleteUser({{ $user->id }});">Eliminar</button>
+                            <button type="button" class="btn btn-primary" onclick="document.getElementById('edit-form-{{ $user->id }}').submit();">Guardar</button>
+                            <button type="button" class="btn btn-light text-danger" onclick="deleteUser({{ $user->id }});">Eliminar</button>
                         </div>
                     </form>
                     <form id="delete-form-{{ $user->id }}" action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:none;">
@@ -98,15 +96,66 @@
 @section('js')
 <script>
 function deleteUser(userId) {
-    if (confirm('¿Estás seguro?')) {
-        document.getElementById('delete-form-' + userId).submit();
-    }
+    const SwalBS = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-light btn-lg text-danger',
+            cancelButton: 'btn btn-light btn-lg'
+        },
+        buttonsStyling: false
+    });
+
+    SwalBS.fire({
+        title: '¿Eliminar Usuario?',
+        text: "Esta acción es irreversible.",
+        showCancelButton: true,
+        confirmButtonText: 'Eliminar',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('delete-form-' + userId).submit();
+        }
+    });
 }
 
 $(document).ready(function() {
     @if(session('success'))
-        $('.toast').toast('show');
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            text: '{{ session('success') }}',
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: false
+        });
     @endif
+});
+
+$(".search").keyup(function () {
+    var searchTerm = $(".search").val().toLowerCase();
+    var listItem = $('.results tbody').children('tr');
+    
+    $.extend($.expr[':'], {'containsi': function(elem, i, match, array){
+        return (elem.textContent || elem.innerText || '').toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
+    }});
+
+    var jobCount = 0;
+    $(".results tbody tr").each(function() {
+        var rowText = $(this).text().toLowerCase();
+        if (rowText.indexOf(searchTerm) === -1) {
+            $(this).hide();
+        } else {
+            $(this).show();
+            jobCount++;
+        }
+    });
+
+    if (jobCount == '0') {
+        $('.no-result').show();
+    } else {
+        $('.no-result').hide();
+    }
 });
 </script>
 @stop

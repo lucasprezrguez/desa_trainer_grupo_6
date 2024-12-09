@@ -17,3 +17,7 @@
 .nav-item .nav-link .logout-text {
     display: none;
 }
+
+.swal2-actions {
+    gap: 10px;
+}
