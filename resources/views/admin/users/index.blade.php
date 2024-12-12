@@ -4,24 +4,22 @@
 
 @section('content_header')
     <div class="d-flex align-items-center justify-content-between" style="gap: 10px;">
-        <div class="d-flex align-items-center" style="gap: 10px;">
+        <div class="d-flex align-items-center mt-4 mb-2" style="gap: 10px;">
             <h1>Lista de Usuarios</h1>
             <button class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#createUserModal">Añadir Nuevo</button>
         </div>
-        <div class="search-bar">
-            <input type="text" class="search form-control" placeholder="Buscar...">
-        </div>
     </div>
+    <p class="text-muted w-75">En esta tabla puedes ver todos los usuarios registrados. Puedes añadir nuevos usuarios, editar la información existente o eliminar usuarios que ya no necesites. Usa los botones de acción en cada fila para realizar estas tareas.</p>
 @stop
 
 @section('content')
-    <table class="table shadow-sm bg-white rounded results">
+    <table class="table table-striped shadow-sm bg-white rounded results">
         <thead>
             <tr>
-                <th style="width: 5%;">#</th>
-                <th style="width: 40%;">Nombre</th>
-                <th style="width: 45%;">Correo Electrónico</th>
-                <th style="width: 10%;">Acciones</th>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Correo Electrónico</th>
+                <th class="text-right">Acciones</th>
             </tr>
             <tr class="warning no-result" style="display:none;">
                 <td colspan="4">No hay resultados.</td>
@@ -33,20 +31,21 @@
                     <td>{{ $user->id }}</td>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
-                    <td>
-                        <a href="#" data-toggle="modal" data-target="#editUserModal-{{ $user->id }}">Editar</a>
+                    <td class="text-right">
+                        <a href="#" class="" data-toggle="modal" data-target="#editUserModal-{{ $user->id }}">Editar</a>
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+    
 
     <!-- Modal Crear Usuario -->
     <div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="createUserModalLabel">Crear Usuario</h5>
+                    <h5 class="modal-title" id="createUserModalLabel">Añadir Usuario</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -55,8 +54,9 @@
                     <div class="modal-body">
                         @include('admin.users.create')
                     </div>
-                    <div class="modal-footer d-flex justify-content-between">
-                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    <div class="modal-footer d-flex justify-content-start">
+                        <button type="submit" class="btn btn-primary">Añadir</button>
+                        <button type="button" class="btn btn-link" data-dismiss="modal">Cancelar</button>
                     </div>
                 </form>
             </div>
@@ -79,7 +79,10 @@
                             @include('admin.users.edit', ['user' => $user])
                         </div>
                         <div class="modal-footer d-flex justify-content-between">
-                            <button type="button" class="btn btn-primary" onclick="document.getElementById('edit-form-{{ $user->id }}').submit();">Guardar</button>
+                            <div>
+                                <button type="button" class="btn btn-primary" onclick="document.getElementById('edit-form-{{ $user->id }}').submit();">Guardar</button>
+                                <button href="#" class="btn btn-link" onclick="generatePassword({{ $user->id }}); return false;"><u>Resetear contraseña</u></button>
+                            </div>
                             <button type="button" class="btn btn-light text-danger" onclick="deleteUser({{ $user->id }});">Eliminar</button>
                         </div>
                     </form>
@@ -118,6 +121,52 @@ function deleteUser(userId) {
     });
 }
 
+function generatePassword(userId) {
+    const resetLink = document.querySelector(`button[onclick="generatePassword(${userId}); return false;"]`);
+    resetLink.style.pointerEvents = 'none';
+    resetLink.style.opacity = '0.5';
+    document.body.style.cursor = 'wait';
+
+    $.ajax({
+        url: '/admin/users/' + userId + '/generate-password',
+        method: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}'
+        },
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        success: function(response) {
+            if (response.success) {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    text: response.message,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+            } else {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    text: response.message,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+            }
+        },
+        complete: function() {
+            resetLink.style.pointerEvents = 'auto';
+            resetLink.style.opacity = '1';
+            document.body.style.cursor = 'auto';
+        }
+    });
+}
+
 $(document).ready(function() {
     @if(session('success'))
         Swal.fire({
@@ -130,32 +179,39 @@ $(document).ready(function() {
             showConfirmButton: false
         });
     @endif
+
+    @if(session('error'))
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'error',
+            text: '{{ session('error') }}',
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: false
+        });
+    @endif
 });
 
-$(".search").keyup(function () {
-    var searchTerm = $(".search").val().toLowerCase();
-    var listItem = $('.results tbody').children('tr');
-    
-    $.extend($.expr[':'], {'containsi': function(elem, i, match, array){
-        return (elem.textContent || elem.innerText || '').toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
-    }});
-
-    var jobCount = 0;
-    $(".results tbody tr").each(function() {
-        var rowText = $(this).text().toLowerCase();
-        if (rowText.indexOf(searchTerm) === -1) {
-            $(this).hide();
-        } else {
-            $(this).show();
-            jobCount++;
+$(document).ready(function() {
+    $('.results').DataTable({
+        "language": {
+            "lengthMenu": "_MENU_",
+            "zeroRecords": "No hay resultados.",
+            "search": "Buscar:",
+        },
+        "ordering": false,
+        "select": true,
+        "paging": true,
+        "autoWidth": true,
+        "responsive": true,
+        "layout": {
+            "topStart": 'search',
+            "topEnd": 'pageLength',
+            "bottomStart": null,
+            "bottomEnd": 'paging',
         }
     });
-
-    if (jobCount == '0') {
-        $('.no-result').show();
-    } else {
-        $('.no-result').hide();
-    }
 });
 </script>
 @stop

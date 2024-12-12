@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use App\Mail\UserCredentialsMail;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $users = User::paginate(10);
+        $users = User::all();
         return view('admin.users.index', compact('users'));
     }
 
@@ -21,16 +25,18 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
         ]);
 
-        User::create([
+        $password = Str::random(10);
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($request->password),
+            'password' => bcrypt($password),
         ]);
+
+        Mail::to($user->email)->send(new UserCredentialsMail($user, $password));
 
         return redirect()->route('users.index')->with('success', 'Usuario creado con éxito.');
     }
@@ -56,5 +62,20 @@ class UserController extends Controller
     {
         $user->delete();
         return redirect()->route('users.index')->with('success', 'Usuario eliminado con éxito.');
+    }
+
+    public function generatePassword(User $user)
+    {
+        try {
+            $newPassword = Str::random(10);
+            $user->password = Hash::make($newPassword);
+            $user->save();
+
+            Mail::to($user->email)->send(new \App\Mail\NewPasswordMail($newPassword));
+
+            return response()->json(['success' => true, 'message' => 'Contraseña generada con éxito.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Hubo un problema al generar la nueva contraseña.']);
+        }
     }
 }

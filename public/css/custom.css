@@ -18,6 +18,10 @@
     display: none;
 }
 
+.content-wrapper {
+    background-color: #fafafa;
+}
+
 .swal2-actions {
     gap: 10px;
 }
