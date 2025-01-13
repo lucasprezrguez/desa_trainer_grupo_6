@@ -304,6 +304,21 @@ return [
             'route' => 'users.index',
             'icon'  => 'fas fa-users',
         ],
+        [
+            'text' => 'Dispositivos',
+            'route' => 'devices.index',
+            'icon'  => 'fas fa-briefcase-medical',
+        ],
+        [
+            'text' => 'Escenarios',
+            'route' => 'scenarios.index',
+            'icon'  => 'fas fa-bolt',
+        ],
+        [
+            'text' => 'Instrucciones',
+            'route' => 'instructions.index',
+            'icon'  => 'fas fa-bolt',
+        ],
         // Navbar items:
         // [
         //     'type' => 'navbar-search',
