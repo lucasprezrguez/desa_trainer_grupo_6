@@ -16,33 +16,65 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
+    Route::get('panel', function () {
+        return view('admin.dashboard');
     })->name('dashboard');
 });
 
-Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
-});
+// Route::middleware(['auth', 'verified'])->prefix('panel')->group(function () {
+//     Route::get('/dashboard', function () {
+//         return view('admin.dashboard');
+//     })->name('admin.dashboard');
+// });
 
-Route::middleware(['auth'])->prefix('admin')->group(function () {
-    Route::resource('users', UserController::class);
-    Route::post('/users/{user}/generate-password', [UserController::class, 'generatePassword'])->name('users.generatePassword');
+Route::middleware(['auth'])->prefix('panel')->group(function () {
+    Route::resource('usuarios', UserController::class)->names([
+        'index' => 'users.index',
+        'create' => 'users.create',
+        'store' => 'users.store',
+        'show' => 'users.show',
+        'edit' => 'users.edit',
+        'update' => 'users.update',
+        'destroy' => 'users.destroy',
+    ]);
+    Route::post('/usuarios/{user}/generate-password', [UserController::class, 'generatePassword'])->name('users.generatePassword');
 });
 
 //DESA
-Route::middleware(['auth'])->prefix('admin')->group(function () {
-    Route::resource('devices', DESAController::class);
+Route::middleware(['auth'])->prefix('panel')->group(function () {
+    Route::resource('dispositivos', DESAController::class)->names([
+        'index' => 'devices.index',
+        'create' => 'devices.create',
+        'store' => 'devices.store',
+        'show' => 'devices.show',
+        'edit' => 'devices.edit',
+        'update' => 'devices.update',
+        'destroy' => 'devices.destroy',
+    ]);
 });
 
 //Scenario
-Route::middleware(['auth'])->prefix('admin')->group(function () {
-    Route::resource('scenarios', ScenarioController::class);
+Route::middleware(['auth'])->prefix('panel')->group(function () {
+    Route::resource('escenarios', ScenarioController::class)->names([
+        'index' => 'scenarios.index',
+        'create' => 'scenarios.create',
+        'store' => 'scenarios.store',
+        'show' => 'scenarios.show',
+        'edit' => 'scenarios.edit',
+        'update' => 'scenarios.update',
+        'destroy' => 'scenarios.destroy',
+    ]);
 });
 
 //Instruction
-Route::middleware(['auth'])->prefix('admin')->group(function () {
-    Route::resource('instructions', InstructionController::class);
+Route::middleware(['auth'])->prefix('panel')->group(function () {
+    Route::resource('instrucciones', InstructionController::class)->names([
+        'index' => 'instructions.index',
+        'create' => 'instructions.create',
+        'store' => 'instructions.store',
+        'show' => 'instructions.show',
+        'edit' => 'instructions.edit',
+        'update' => 'instructions.update',
+        'destroy' => 'instructions.destroy',
+    ]);
 });

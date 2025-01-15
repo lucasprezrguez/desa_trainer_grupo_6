@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Scenario;
 use App\Models\Device;
 use Illuminate\Http\Request;
 
@@ -11,7 +12,8 @@ class DESAController extends Controller
     {
         $devices = Device::all();
         $nombre = gethostname();
-        return view('admin.devices.index', compact('devices'))->with('nombre', $nombre);
+        $scenarios = Scenario::all();
+        return view('admin.devices.index', compact('devices', 'scenarios'))->with('nombre', $nombre);
     }
 
     public function create()
@@ -20,23 +22,31 @@ class DESAController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'on_led' => 'required|boolean',
-            'pause_state' => 'required|boolean',
-            'display_message' => 'nullable|string',
-        ]);
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'image' => 'nullable|image|max:2048',
+    ]);
 
-        Device::create($request->all());
-
-        return redirect()->route('admin.devices.index')->with('success', 'DESA creado con éxito.');
+    $imagePath = null;
+    if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')->store('device_images', 'public');
     }
 
-    public function edit(Device $device)
-    {
-        return view('desa.edit', compact('device'));
+    Device::create([
+        'name' => $validated['name'],
+        'image' => $imagePath,
+    ]);
+
+    return redirect()->route('devices.index')->with('success', 'Dispositivo creado exitosamente.');
     }
+
+    public function edit($id)
+    {
+        $device = Device::findOrFail($id);
+        return view('devices.edit', compact('device'));
+    }
+    
 
     public function update(Request $request, Device $device)
     {

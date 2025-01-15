@@ -31,10 +31,10 @@
             @foreach ($scenarios as $scenario)
                 <tr>
                     <td>{{ $scenario->id }}</td>
-                    <td>{{ $scenario->text_content }}</td>
-                    <td>{{ $scenario->require_action ? 'Sí' : 'No' }}</td>
-                    <td>{{ $scenario->action_type }}</td>
-                    <td>{{ $scenario->waiting_time }}</td>
+                    <td>{{ $scenario->name }}</td>
+                    <td>{{ $scenario->description }}</td>
+                    <td>{{ $scenario->discharge_numbers }}</td>
+                    <td>{{ $scenario->min_interval }}</td>
                     <td class="text-right">
                         <a href="#" class="" data-toggle="modal" data-target="#editInstructionModal-{{ $instruction->id }}">Editar</a>
                     </td>

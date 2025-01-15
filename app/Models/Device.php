@@ -14,6 +14,7 @@ class Device extends Model
         'on_led',
         'pause_state',
         'display_message',
+        'image',
     ];
 
     public function parametros()
