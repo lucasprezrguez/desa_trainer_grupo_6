@@ -305,7 +305,7 @@ return [
             'icon'  => 'fas fa-users',
         ],
         [
-            'text' => 'Dispositivos',
+            'text' => 'Dispositivo',
             'route' => 'devices.index',
             'icon'  => 'fas fa-briefcase-medical',
         ],

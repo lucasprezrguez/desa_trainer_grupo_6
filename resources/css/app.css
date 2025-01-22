@@ -1,11 +1,11 @@
-@import 'flowbite';
+
 
 /* Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Custom Styles */
+Custom Styles
 [x-cloak] {
     display: none;
 }

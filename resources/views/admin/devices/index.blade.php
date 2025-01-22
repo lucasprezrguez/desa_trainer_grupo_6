@@ -6,10 +6,10 @@
     <div class="d-flex align-items-center justify-content-between" style="gap: 10px;">
         <div class="d-flex align-items-center mt-4 mb-2" style="gap: 10px;">
             <h1>Lista de Dispositivos</h1>
-            <button class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#createDeviceModal">Añadir Nuevo </button>
+            <!-- <button class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#createDeviceModal">Añadir Nuevo </button> -->
 
             <!-- Modal Crear Dispositivo -->
-<div class="modal fade" id="createDeviceModal" tabindex="-1" role="dialog" aria-labelledby="createDeviceModalLabel" aria-hidden="true">
+<!-- <div class="modal fade" id="createDeviceModal" tabindex="-1" role="dialog" aria-labelledby="createDeviceModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -55,7 +55,7 @@
             </form>
         </div>
     </div>
-</div>
+</div> -->
 
 
 

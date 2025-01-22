@@ -9,8 +9,8 @@ export default defineConfig({
         }),
     ],
     server: {
-        host: '192.168.221.160', // Cambia la IP aquí
-        port: 3000,              // Puedes cambiar el puerto si es necesario
-        open: false,             // No abrir automáticamente en el navegador
+        host: '192.168.221.25', // Cambiar la IP aquí
+        port: 3000,
+        open: false,
       },
 });

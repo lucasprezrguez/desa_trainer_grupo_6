@@ -5,11 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\Scenario;
 use App\Models\Device;
 use Illuminate\Http\Request;
-
+use Detection\MobileDetect;
+// use App\Helpers\MobileDetect;
 class DESAController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // $detect = new MobileDetect();
+        // $data = [
+        //     'is_mobile' => $detect->isMobile() ? 'Sí' : 'No',
+        //     'is_tablet' => $detect->isTablet() ? 'Sí' : 'No',
+        //     // 'platform' => $detect->getPlatform(),
+        //     // 'browser' => $detect->getBrowser(),
+        // ];
+        // dd($data);
         $devices = Device::all();
         $nombre = gethostname();
         $scenarios = Scenario::all();

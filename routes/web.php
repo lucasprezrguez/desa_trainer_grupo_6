@@ -78,3 +78,12 @@ Route::middleware(['auth'])->prefix('panel')->group(function () {
         'destroy' => 'instructions.destroy',
     ]);
 });
+
+Route::get('trainer', function(){
+    return view('/trainer/index');
+});
+
+// Add the new route for 'aed.blade.php'
+Route::get('trainer/aed', function(){
+    return view('/trainer/aed');
+});
