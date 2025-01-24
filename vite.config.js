@@ -9,7 +9,7 @@ export default defineConfig({
         }),
     ],
     server: {
-        host: '192.168.221.25', // Cambiar la IP aquí
+        host: '192.168.221.160', // Cambiar la IP aquí
         port: 3000,
         open: false,
       },
