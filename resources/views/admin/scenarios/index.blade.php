@@ -36,7 +36,7 @@
                     <td>{{ $scenario->discharge_numbers }}</td>
                     <td>{{ $scenario->min_interval }}</td>
                     <td class="text-right">
-                        <a href="#" class="" data-toggle="modal" data-target="#editInstructionModal-{{ $instruction->id }}">Editar</a>
+                        <a href="#" class="" data-toggle="modal" data-target="#editInstructionModal-{{ $scenario->id }}">Editar</a>
                     </td>
                 </tr>
             @endforeach
@@ -68,27 +68,27 @@
 
     <!-- Modal Editar Instrucción -->
     @foreach ($scenarios as $scenario)
-        <div class="modal fade" id="editInstructionModal-{{ $instruction->id }}" tabindex="-1" role="dialog" aria-labelledby="editInstructionModalLabel-{{ $instruction->id }}" aria-hidden="true">
+        <div class="modal fade" id="editInstructionModal-{{ $scenario->id }}" tabindex="-1" role="dialog" aria-labelledby="editInstructionModalLabel-{{ $scenario->id }}" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editInstructionModalLabel-{{ $instruction->id }}">Editar Instrucción</h5>
+                        <h5 class="modal-title" id="editInstructionModalLabel-{{ $scenario->id }}">Editar Instrucción</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form id="edit-form-{{ $instruction->id }}" action="{{ route('instructions.update', $instruction->id) }}" method="POST">
+                    <form id="edit-form-{{ $scenario->id }}" action="{{ route('instructions.update', $scenario->id) }}" method="POST">
                         <!-- <div class="modal-body">
-                            @include('admin.instructions.edit', ['instruction' => $instruction])
+                            @include('admin.instructions.edit', ['instruction' => $scenario])
                         </div> -->
                         <div class="modal-footer d-flex justify-content-between">
                             <div>
-                                <button type="button" class="btn btn-primary" onclick="document.getElementById('edit-form-{{ $instruction->id }}').submit();">Guardar</button>
+                                <button type="button" class="btn btn-primary" onclick="document.getElementById('edit-form-{{ $scenario->id }}').submit();">Guardar</button>
                             </div>
-                            <button type="button" class="btn btn-light text-danger" onclick="deleteInstruction({{ $instruction->id }});">Eliminar</button>
+                            <button type="button" class="btn btn-light text-danger" onclick="deleteInstruction({{ $scenario->id }});">Eliminar</button>
                         </div>
                     </form>
-                    <form id="delete-form-{{ $instruction->id }}" action="{{ route('instructions.destroy', $instruction->id) }}" method="POST" style="display:none;">
+                    <form id="delete-form-{{ $scenario->id }}" action="{{ route('instructions.destroy', $scenario->id) }}" method="POST" style="display:none;">
                         @csrf
                         @method('DELETE')
                     </form>
