@@ -1,6 +1,3 @@
-import './bootstrap';
-import 'flowbite';
-
 document.addEventListener("DOMContentLoaded", () => {
     let selectedElement = null; // Electrodo seleccionado
     let offsetX = 0, offsetY = 0; // Desplazamiento inicial

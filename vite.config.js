@@ -8,9 +8,9 @@ export default defineConfig({
             refresh: true,
         }),
     ],
-    // server: {
-    //     host: '192.168.221.160',
-    //     port: 3000,
-    //     open: false,
-    //   },
+    server: {
+        host: '192.168.221.160',
+        port: 3000,
+        open: false,
+    },
 });

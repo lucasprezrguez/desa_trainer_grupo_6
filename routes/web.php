@@ -1,16 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DESAController;
 use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\ScenarioController;
 
+// Redirigir a la página de inicio de sesión
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// Grupo de middleware para usuarios autenticados y verificados
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -21,12 +22,7 @@ Route::middleware([
     })->name('dashboard');
 });
 
-// Route::middleware(['auth', 'verified'])->prefix('panel')->group(function () {
-//     Route::get('/dashboard', function () {
-//         return view('admin.dashboard');
-//     })->name('admin.dashboard');
-// });
-
+// Rutas de usuarios con middleware de autenticación
 Route::middleware(['auth'])->prefix('panel')->group(function () {
     Route::resource('usuarios', UserController::class)->names([
         'index' => 'users.index',
@@ -37,10 +33,10 @@ Route::middleware(['auth'])->prefix('panel')->group(function () {
         'update' => 'users.update',
         'destroy' => 'users.destroy',
     ]);
-    Route::post('/usuarios/{user}/generate-password', [UserController::class, 'generatePassword'])->name('users.generatePassword');
+    Route::post('/users/{user}/generate-password', [UserController::class, 'generatePassword'])->name('users.generatePassword');
 });
 
-//DESA
+// Rutas de DESA con middleware de autenticación
 Route::middleware(['auth'])->prefix('panel')->group(function () {
     Route::resource('dispositivos', DESAController::class)->names([
         'index' => 'devices.index',
@@ -53,7 +49,7 @@ Route::middleware(['auth'])->prefix('panel')->group(function () {
     ]);
 });
 
-//Scenario
+// Rutas de escenarios con middleware de autenticación
 Route::middleware(['auth'])->prefix('panel')->group(function () {
     Route::resource('escenarios', ScenarioController::class)->names([
         'index' => 'scenarios.index',
@@ -66,7 +62,7 @@ Route::middleware(['auth'])->prefix('panel')->group(function () {
     ]);
 });
 
-//Instruction
+// Rutas de instrucciones con middleware de autenticación
 Route::middleware(['auth'])->prefix('panel')->group(function () {
     Route::resource('instrucciones', InstructionController::class)->names([
         'index' => 'instructions.index',
@@ -79,11 +75,20 @@ Route::middleware(['auth'])->prefix('panel')->group(function () {
     ]);
 });
 
+// Rutas de vistas del entrenador
 Route::get('trainer', function(){
     return view('/trainer/index');
 });
 
-// Add the new route for 'aed.blade.php'
+Route::get('/modal-electrodos', function () {
+    return view('trainer.modal-electrodos'); 
+})->name('ruta.modal.electrodos');
+
 Route::get('trainer/aed', function(){
     return view('/trainer/aed');
+});
+
+// Test
+Route::get('/electrodo', function () {
+    return view('trainer.electrodo'); 
 });

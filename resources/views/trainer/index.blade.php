@@ -19,9 +19,52 @@
         </div>
     </div>
 
+    <!-- Botón NUEVO para abrir el modal -->
+    <button 
+        onclick="abrirModalElectrodos()" 
+        class="absolute top-6 right-6 bg-yellow-400 p-2 rounded-lg hover:bg-yellow-500 transition"
+    >
+        Colocar electrodos
+    </button>
+
+    <!-- Modal (añadido aquí) -->
+    <div id="modalElectrodos" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <!-- Contenido del modal se cargará aquí -->
+    </div>
+
     <style>
         .clip-triangle {
             clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
         }
     </style>
+
+    <script>
+        // Abrir modal
+        function abrirModalElectrodos() {
+            const modal = document.getElementById('modalElectrodos');
+            
+            // Verificar si el modal existe
+            if (!modal) {
+                console.error('No se encontró el modal');
+                return;
+            }
+
+            modal.classList.remove('hidden');
+            
+            // Cargar contenido del modal via AJAX (opcional)
+            fetch("{{ route('ruta.modal.electrodos') }}")  <!-- Define tu ruta en web.php -->
+                .then(response => response.text())
+                .then(html => {
+                    modal.innerHTML = html;
+                });
+        }
+
+        // Cerrar modal
+        function cerrarModal() {
+            const modal = document.getElementById('modalElectrodos');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+    </script>
 </body>

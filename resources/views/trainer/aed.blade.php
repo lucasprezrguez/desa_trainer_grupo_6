@@ -1,12 +1,15 @@
 @extends('layouts.app')
 
-<div id="background-container" class="w-screen h-screen flex justify-center items-center bg-neutral-800 bg-contain bg-center bg-no-repeat" style="background-image: url('{{ asset('images/device.png') }}');">
+<div class="w-screen h-screen flex justify-center items-center bg-neutral-800 relative">
+    <!-- Imagen de fondo -->
+    <img id="background-image" src="{{ asset('images/device.png') }}" alt="Background Image" class="absolute inset-0 mx-auto h-full object-contain z-0">
+    
     <!-- Contenedor del DESA Trainer -->
-    <div class="rounded-lg shadow-3xl w-full h-full flex flex-col justify-evenly items-center relative">
+    <div class="rounded-lg shadow-3xl w-full h-full flex flex-col justify-between items-center relative z-10" style="width: var(--background-image-width); height: var(--background-image-height);">
         <!-- Contenedor del LED y el botón de encendido/apagado -->
         <div class="flex flex-col items-center justify-between">
             <!-- LED indicador -->
-            <div id="led-indicator" class="bg-neutral-700 w-8 h-8 rounded-full mb-8"></div>
+            <div id="led-indicator" class="bg-neutral-700 w-8 h-8 rounded-full mb-4"></div>
             
             <!-- Botón de encendido/apagado -->
             <div id="power-button" class="bg-green-500 w-24 h-24 rounded-full flex items-center justify-center text-white font-bold cursor-pointer border-2 border-green-950 transform active:scale-90">
@@ -15,7 +18,7 @@
         </div>
 
         <!-- Pantalla con marco negro -->
-        <div class="bg-neutral-700 w-[32rem] h-[32rem] border-2 border-gray-400 rounded-3xl inset-shadow-sm flex flex-col items-center justify-between p-4 relative">
+        <div class="bg-neutral-700 w-[72%] aspect-square border-2 border-neutral-400 rounded-3xl inset-shadow-sm flex flex-col items-center justify-between p-4 relative">
             <!-- Contenedor Flexbox -->
             <div class="flex flex-col items-center justify-around w-full h-full">
                 <!-- Botón superior en el marco negro -->
@@ -42,7 +45,7 @@
     </div>
 </div>
 
-<!-- drawer component -->
+<!-- Cajonera -->
 <div id="drawer-scenarios" class="fixed top-0 left-0 z-40 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-white w-64 flex flex-col" tabindex="-1" aria-labelledby="drawer-scenarios-label">
     <!-- Encabezado del Drawer -->
     <div class="flex justify-between items-center mb-4">
@@ -138,17 +141,26 @@
 <script>
     document.getElementById('power-button').addEventListener('click', function() {
         let led = document.getElementById('led-indicator');
-        let background = document.getElementById('background-container');
+        let background = document.getElementById('background-image');
         if (led.classList.contains('bg-neutral-700')) {
             led.classList.remove('bg-neutral-700');
             led.classList.add('bg-lime-400');
             led.style.boxShadow = "rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 9px, #89FF00 0 2px 12px";
-            background.style.backgroundImage = "url('{{ asset('images/device_pads.png') }}')";
+            background.src = "{{ asset('images/device_pads.png') }}";
         } else {
             led.classList.remove('bg-lime-400');
             led.classList.add('bg-neutral-700');
             led.style.boxShadow = "none";
-            background.style.backgroundImage = "url('{{ asset('images/device.png') }}')";
+            background.src = "{{ asset('images/device.png') }}";
         }
+    });
+
+    window.addEventListener('load', function() {
+        let backgroundImage = document.getElementById('background-image');
+        let renderedWidth = backgroundImage.clientWidth;
+        let renderedHeight = backgroundImage.clientHeight;
+        let heightPercentage = renderedHeight * 0.87;
+        document.documentElement.style.setProperty('--background-image-width', renderedWidth + 'px');
+        document.documentElement.style.setProperty('--background-image-height', heightPercentage + 'px');
     });
 </script>

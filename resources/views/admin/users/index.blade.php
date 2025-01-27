@@ -128,7 +128,7 @@ function generatePassword(userId) {
     document.body.style.cursor = 'wait';
 
     $.ajax({
-        url: '/admin/users/' + userId + '/generate-password',
+        url: '/panel/users/' + userId + '/generate-password', // TENER EN CUENTA A LA HORA DE CAMBIAR RUTAS
         method: 'POST',
         data: {
             _token: '{{ csrf_token() }}'
