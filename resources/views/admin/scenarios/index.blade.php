@@ -16,25 +16,19 @@
     <table class="table table-striped shadow-sm bg-white rounded results">
         <thead>
             <tr>
-                <th>#</th>
                 <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Número de descargas</th>
-                <th>Intervalo Mínimo</th>
+                <th>Imagen</th>
                 <th class="text-right">Acciones</th>
             </tr>
             <tr class="warning no-result" style="display:none;">
-                <td colspan="6">No hay resultados.</td>
+                <td colspan="4">No hay resultados.</td>
             </tr>
         </thead>
         <tbody>
             @foreach ($scenarios as $scenario)
                 <tr>
-                    <td>{{ $scenario->id }}</td>
-                    <td>{{ $scenario->name }}</td>
-                    <td>{{ $scenario->description }}</td>
-                    <td>{{ $scenario->discharge_numbers }}</td>
-                    <td>{{ $scenario->min_interval }}</td>
+                    <td>{{ $scenario->scenario_name }}</td>
+                    <td><img src="{{ asset($scenario->image_url) }}" alt="Imagen del escenario" style="width: auto; height: 36px;"></td>
                     <td class="text-right">
                         <a href="#" class="" data-toggle="modal" data-target="#editInstructionModal-{{ $scenario->id }}">Editar</a>
                     </td>

@@ -2,14 +2,14 @@
 
 <div class="w-screen h-screen flex justify-center items-center bg-neutral-800 relative">
     <!-- Imagen de fondo -->
-    <img id="background-image" src="{{ asset('images/device.png') }}" alt="Background Image" class="absolute inset-0 mx-auto h-full object-contain z-0">
+    <img id="background-image" src="{{ asset('images/device.png') }}" alt="Background Image" class="absolute inset-0 mx-auto h-full object-contain drop-shadow-2xl">
     
     <!-- Contenedor del DESA Trainer -->
-    <div class="rounded-lg shadow-3xl w-full h-full flex flex-col justify-between items-center relative z-10" style="width: var(--background-image-width); height: var(--background-image-height);">
+    <div class="rounded-lg shadow-3xl w-full h-full flex flex-col justify-between items-center relative" style="width: var(--background-image-width); height: var(--background-image-height);">
         <!-- Contenedor del LED y el botón de encendido/apagado -->
-        <div class="flex flex-col items-center justify-between">
+        <div class="flex flex-col items-center justify-between gap-4">
             <!-- LED indicador -->
-            <div id="led-indicator" class="bg-neutral-700 w-8 h-8 rounded-full mb-4"></div>
+            <div id="led-indicator" class="bg-neutral-700 w-8 h-8 rounded-full"></div>
             
             <!-- Botón de encendido/apagado -->
             <div id="power-button" class="bg-green-500 w-24 h-24 rounded-full flex items-center justify-center text-white font-bold cursor-pointer border-2 border-green-950 transform active:scale-90">
@@ -64,55 +64,14 @@
     <!-- Lista de escenarios -->
     <div class="py-4 overflow-y-auto flex-grow"> <!-- flex-grow permite que este contenido ocupe el espacio restante -->
         <ul class="space-y-2 font-medium">
-            <!-- Elementos de la lista -->
-            <li>
-                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 group">
-                    <i class="ri-number-1 text-gray-500"></i>
-                    <img src="{{ asset('images/scenario_1.png') }}" alt="Escenario 1" class="w-auto h-8 ms-3">
-                </a>
-            </li>
-            <li>
-                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 group">
-                    <i class="ri-number-2 text-gray-500"></i>
-                    <img src="{{ asset('images/scenario_2.png') }}" alt="Escenario 2" class="w-auto h-8 ms-3">
-                </a>
-            </li>
-            <li>
-                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 group">
-                    <i class="ri-number-3 text-gray-500"></i>
-                    <img src="{{ asset('images/scenario_3.png') }}" alt="Escenario 3" class="w-auto h-8 ms-3">
-                </a>
-            </li>
-            <li>
-                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 group">
-                    <i class="ri-number-4 text-gray-500"></i>
-                    <img src="{{ asset('images/scenario_4.png') }}" alt="Escenario 4" class="w-auto h-8 ms-3">
-                </a>
-            </li>
-            <li>
-                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 group">
-                    <i class="ri-number-5 text-gray-500"></i>
-                    <img src="{{ asset('images/scenario_5.png') }}" alt="Escenario 5" class="w-auto h-8 ms-3">
-                </a>
-            </li>
-            <li>
-                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 group">
-                    <i class="ri-number-6 text-gray-500"></i>
-                    <img src="{{ asset('images/scenario_6.png') }}" alt="Escenario 6" class="w-auto h-8 ms-3">
-                </a>
-            </li>
-            <li>
-                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 group">
-                    <i class="ri-number-7 text-gray-500"></i>
-                    <img src="{{ asset('images/scenario_7.png') }}" alt="Escenario 7" class="w-auto h-8 ms-3">
-                </a>
-            </li>
-            <li>
-                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 group">
-                    <i class="ri-number-8 text-gray-500"></i>
-                    <img src="{{ asset('images/scenario_8.png') }}" alt="Escenario 8" class="w-auto h-8 ms-3">
-                </a>
-            </li>
+            @foreach($scenarios as $scenario)
+                <li>
+                    <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 group">
+                        <i class="ri-number-{{ $loop->iteration }} text-gray-500"></i>
+                        <img src="{{ asset($scenario->image_url) }}" alt="Escenario {{ $loop->iteration }}" class="w-auto h-8 ms-3">
+                    </a>
+                </li>
+            @endforeach
         </ul>
     </div>
 

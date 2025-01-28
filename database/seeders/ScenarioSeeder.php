@@ -2,24 +2,21 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Scenario;
 
 class ScenarioSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        DB::table('scenarios')->insert([
-            'name' => 'Sample Scenario',
-            'description' => 'This is a sample scenario.',
-            'dicharge_numbers' => 1,
-            'min_interval' => 1,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        for ($i = 1; $i <= 8; $i++) {
+            Scenario::create([
+                'scenario_name' => 'Escenario ' . $i,
+                'image_url' => 'images/scenario_' . $i . '.png'
+            ]);
+        }
+
+        // Add more scenarios if needed
+        // Scenario::create([...]);
     }
 }

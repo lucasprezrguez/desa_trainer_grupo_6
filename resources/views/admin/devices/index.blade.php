@@ -97,7 +97,7 @@
                 </td>
                 <td class="text-right">
                     <a href="#" class="text-primary" data-toggle="modal" data-target="#editDESAModal-{{ $device->id }}">Editar</a>
-                    <a href="#" class="text-danger" onclick="deleteDESA({{ $device->id }});">Eliminar</a>
+                    
                 </td>
             </tr>
         @endforeach
@@ -142,6 +142,7 @@
                        
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Guardar</button>
+                            <a href="#" class="text-danger" onclick="deleteDESA({{ $device->id }});">Eliminar</a>
                             <button type="button" class="btn btn-link" data-dismiss="modal">Cancelar</button>
                         </div>
                     </form>

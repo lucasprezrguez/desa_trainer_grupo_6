@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DESAController;
 use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\ScenarioController;
+use App\Models\Scenario;
 
 // Redirigir a la página de inicio de sesión
 Route::get('/', function () {
@@ -81,11 +82,13 @@ Route::get('trainer', function(){
 });
 
 Route::get('/modal-electrodos', function () {
-    return view('trainer.modal-electrodos'); 
+    return view('trainer.modal-electrodos');
 })->name('ruta.modal.electrodos');
 
+
 Route::get('trainer/aed', function(){
-    return view('/trainer/aed');
+    $scenarios = Scenario::all();
+    return view('/trainer/aed', compact('scenarios'));
 });
 
 // Test

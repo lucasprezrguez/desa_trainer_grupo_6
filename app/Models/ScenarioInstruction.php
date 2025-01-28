@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ScenarioInstruction extends Pivot
 {
@@ -15,5 +15,12 @@ class ScenarioInstruction extends Pivot
         'scenario_id',
         'instruction_id',
         'order',
+        'repeticiones', // Nueva columna
+        'parametros'    // Nueva columna (JSON)
+    ];
+
+    // Cast para parámetros JSON
+    protected $casts = [
+        'parametros' => 'array'
     ];
 }

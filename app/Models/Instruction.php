@@ -10,14 +10,21 @@ class Instruction extends Model
     use HasFactory;
 
     protected $fillable = [
-        'text_content',
-        'require_action',
-        'action_type',
-        'waiting_time',
+        'instruction_name', // Nueva columna
+        'tts_description',  // Nueva columna
+        'type'              // Nueva columna
     ];
 
+    // Cast para parámetros JSON (si se accede desde el pivot)
+    protected $casts = [
+        'parametros' => 'array' // Solo si Instruction tiene relación directa
+    ];
+
+    // Relación con los escenarios (incluyendo campos del pivot)
     public function scenarios()
     {
-        return $this->belongsToMany(Scenario::class, 'scenario_instruction');
+        return $this->belongsToMany(Scenario::class, 'scenario_instruction')
+                    ->using(ScenarioInstruction::class)
+                    ->withPivot('order', 'repeticiones', 'parametros');
     }
 }
