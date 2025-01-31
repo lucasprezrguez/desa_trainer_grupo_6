@@ -10,9 +10,9 @@ class Instruction extends Model
     use HasFactory;
 
     protected $fillable = [
-        'instruction_name', // Nueva columna
-        'tts_description',  // Nueva columna
-        'type'              // Nueva columna
+        'instruction_name',
+        'tts_description',
+        'type'
     ];
 
     // Cast para parámetros JSON (si se accede desde el pivot)

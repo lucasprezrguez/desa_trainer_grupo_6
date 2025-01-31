@@ -6,6 +6,7 @@ use App\Http\Controllers\DESAController;
 use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\ScenarioController;
 use App\Models\Scenario;
+use App\Http\Middleware\Roles;
 
 // Redirigir a la página de inicio de sesión
 Route::get('/', function () {
@@ -18,10 +19,11 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('panel', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+    
 });
+Route::get('panel', function () {
+    return view('admin.dashboard');
+})->name('dashboard')->middleware(Roles::class);
 
 // Rutas de usuarios con middleware de autenticación
 Route::middleware(['auth'])->prefix('panel')->group(function () {
@@ -89,7 +91,7 @@ Route::get('/modal-electrodos', function () {
 Route::get('trainer/aed', function(){
     $scenarios = Scenario::all();
     return view('/trainer/aed', compact('scenarios'));
-});
+})->name('trainer.aed');
 
 // Test
 Route::get('/electrodo', function () {

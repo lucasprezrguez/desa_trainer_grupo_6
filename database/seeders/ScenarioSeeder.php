@@ -15,8 +15,5 @@ class ScenarioSeeder extends Seeder
                 'image_url' => 'images/scenario_' . $i . '.png'
             ]);
         }
-
-        // Add more scenarios if needed
-        // Scenario::create([...]);
     }
 }

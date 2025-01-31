@@ -15,11 +15,10 @@ class ScenarioInstruction extends Pivot
         'scenario_id',
         'instruction_id',
         'order',
-        'repeticiones', // Nueva columna
-        'parametros'    // Nueva columna (JSON)
+        'repeticiones',
+        'parametros'
     ];
 
-    // Cast para parámetros JSON
     protected $casts = [
         'parametros' => 'array'
     ];

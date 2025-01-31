@@ -14,6 +14,7 @@
         <!-- Remix Icon -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.5.0/remixicon.min.css">
 
+    
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 

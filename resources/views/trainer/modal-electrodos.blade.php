@@ -11,7 +11,7 @@
     </button>
 
     <!-- Contenedor del Maniquí -->
-    <div id="contenedor-maniqui" class="relative mx-auto w-[300px] h-[500px] border">
+    <div id="contenedor-maniqui" class="relative w-[300px] h-[500px] border">
         <!-- Imagen del maniquí -->
         <img 
             src="{{ asset('images/maniqui.png') }}" 
@@ -26,17 +26,21 @@
 
     <!-- Electrodos arrastrables -->
     <div class="flex justify-center gap-4 mt-4">
-        <div 
+        <!-- Electrodo 1 -->
+        <img 
             id="electrodo-1" 
-            class="electrodo w-16 h-16 bg-red-500 text-white text-center leading-[4rem] rounded-full cursor-move"
+            src="{{ asset('images/electrodo.png') }}" 
+            alt="Electrodo 1" 
+            class="electrodo w-16 h-16 cursor-move"
+            style="position: absolute; top: 20px; left: 20px;"
         >
-            Electrodo 1
-        </div>
-        <div 
+        <!-- Electrodo 2 -->
+        <img 
             id="electrodo-2" 
-            class="electrodo w-16 h-16 bg-blue-500 text-white text-center leading-[4rem] rounded-full cursor-move"
+            src="{{ asset('images/electrodo.png') }}" 
+            alt="Electrodo 2" 
+            class="electrodo w-16 h-16 cursor-move"
+            style="position: absolute; top: 20px; left: 200px;"
         >
-            Electrodo 2
-        </div>
     </div>
 </div>
