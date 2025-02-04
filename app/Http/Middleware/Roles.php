@@ -21,13 +21,13 @@ class Roles
     public function handle(Request $request, Closure $next)
     {
         if (!Auth::check()) {
-            return response('Unauthorized.', 403); 
+            return redirect()->route('login');
         }
 
         $user = Auth::user();
         $ruta_actual = $request->route()->getName(); 
 
-        if (($user->roles === 'admin' && $ruta_actual === 'dashboard') ||
+        if (($user->roles === 'admin') ||
             ($user->roles === 'alumno' && $ruta_actual === 'trainer.aed') ||
             ($user->roles === 'profesor' && $ruta_actual === 'dashboard')) {
             return $next($request); 

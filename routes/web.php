@@ -26,21 +26,23 @@ Route::get('panel', function () {
 })->name('dashboard')->middleware(Roles::class);
 
 // Rutas de usuarios con middleware de autenticación
-Route::middleware(['auth'])->prefix('panel')->group(function () {
-    Route::resource('usuarios', UserController::class)->names([
-        'index' => 'users.index',
-        'create' => 'users.create',
-        'store' => 'users.store',
-        'show' => 'users.show',
-        'edit' => 'users.edit',
-        'update' => 'users.update',
-        'destroy' => 'users.destroy',
-    ]);
+Route::middleware(Roles::class)->prefix('panel')->group(function () {
+    Route::resource('usuarios', UserController::class)
+        ->parameters(['usuarios' => 'user'])
+        ->names([
+            'index'   => 'users.index',
+            'create'  => 'users.create',
+            'store'   => 'users.store',
+            'show'    => 'users.show',
+            'edit'    => 'users.edit',
+            'update'  => 'users.update',
+            'destroy' => 'users.destroy',
+        ]);
     Route::post('/users/{user}/generate-password', [UserController::class, 'generatePassword'])->name('users.generatePassword');
 });
 
 // Rutas de DESA con middleware de autenticación
-Route::middleware(['auth'])->prefix('panel')->group(function () {
+Route::middleware(Roles::class)->prefix('panel')->group(function () {
     Route::resource('dispositivos', DESAController::class)->names([
         'index' => 'devices.index',
         'create' => 'devices.create',
@@ -53,7 +55,7 @@ Route::middleware(['auth'])->prefix('panel')->group(function () {
 });
 
 // Rutas de escenarios con middleware de autenticación
-Route::middleware(['auth'])->prefix('panel')->group(function () {
+Route::middleware(Roles::class)->prefix('panel')->group(function () {
     Route::resource('escenarios', ScenarioController::class)->names([
         'index' => 'scenarios.index',
         'create' => 'scenarios.create',
@@ -66,7 +68,7 @@ Route::middleware(['auth'])->prefix('panel')->group(function () {
 });
 
 // Rutas de instrucciones con middleware de autenticación
-Route::middleware(['auth'])->prefix('panel')->group(function () {
+Route::middleware(Roles::class)->prefix('panel')->group(function () {
     Route::resource('instrucciones', InstructionController::class)->names([
         'index' => 'instructions.index',
         'create' => 'instructions.create',

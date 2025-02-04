@@ -13,6 +13,14 @@
 @stop
 
 @section('content')
+    <style>
+        .user-role-badge {
+            display: none;
+        }
+        tr:hover .user-role-badge {
+            display: inline;
+        }
+    </style>
     <table class="table table-striped shadow-sm bg-white rounded results">
         <thead>
             <tr>
@@ -27,19 +35,28 @@
         </thead>
         <tbody>
             @foreach ($users as $user)
-                <tr>
+                <tr 
+                    @if (auth()->user()->id !== $user->id)
+                        data-toggle="modal" data-target="#editUserModal-{{ $user->id }}" style="cursor: pointer;"
+                    @else
+                        style="cursor: not-allowed;"
+                    @endif
+                >
                     <td>{{ $user->id }}</td>
-                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->name }} <span class="badge user-role-badge">{{ ucfirst($user->roles) }}</span></td>
                     <td>{{ $user->email }}</td>
                     <td class="text-right">
-                        <a href="#" class="" data-toggle="modal" data-target="#editUserModal-{{ $user->id }}">Editar</a>
+                        @if (auth()->user()->id !== $user->id)
+                            <a href="#" class="" data-toggle="modal" data-target="#editUserModal-{{ $user->id }}">Editar</a>
+                        @else
+                            <span class="text-muted">Tú</span>
+                        @endif
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
     
-
     <!-- Modal Crear Usuario -->
     <div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -128,7 +145,7 @@ function generatePassword(userId) {
     document.body.style.cursor = 'wait';
 
     $.ajax({
-        url: '/panel/users/' + userId + '/generate-password', // TENER EN CUENTA A LA HORA DE CAMBIAR RUTAS
+        url: '/panel/users/' + userId + '/generate-password',
         method: 'POST',
         data: {
             _token: '{{ csrf_token() }}'
@@ -191,6 +208,12 @@ $(document).ready(function() {
             showConfirmButton: false
         });
     @endif
+
+    $('tbody tr').on('click', function(e) {
+        if (!$(e.target).is('a')) {
+            $(this).find('a[data-toggle="modal"]').click();
+        }
+    });
 });
 
 $(document).ready(function() {

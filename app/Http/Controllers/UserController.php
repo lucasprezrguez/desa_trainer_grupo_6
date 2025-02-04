@@ -27,6 +27,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
+            'roles' => 'required|string|in:admin,profesor,alumno',
         ]);
 
         $password = Str::random(10);
@@ -34,6 +35,7 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($password),
+            'roles' => $request->roles,
         ]);
 
         Mail::to($user->email)->send(new UserCredentialsMail($user, $password));
@@ -51,6 +53,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $user->id,
+            'roles' => 'required|string|in:admin,profesor,alumno',
         ]);
 
         $user->update($request->all());
