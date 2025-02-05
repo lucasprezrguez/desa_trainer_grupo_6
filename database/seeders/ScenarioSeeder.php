@@ -11,8 +11,8 @@ class ScenarioSeeder extends Seeder
     {
         for ($i = 1; $i <= 8; $i++) {
             Scenario::create([
-                'scenario_name' => 'Escenario ' . $i,
-                'image_url' => 'images/scenario_' . $i . '.png'
+                'scenario_name' => 'aedt3_sce_' . $i,
+                'image_url' => 'images/aedt3_sce_' . $i . '.png'
             ]);
         }
     }

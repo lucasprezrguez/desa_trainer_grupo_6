@@ -63,9 +63,9 @@ return [
     |
     */
 
-    'logo' => '<b>DESA</b> Admin',
+    'logo' => null,
     'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-    'logo_img_class' => 'brand-image',
+    'logo_img_class' => 'd-none',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
     'logo_img_alt' => 'Admin Logo',
@@ -302,22 +302,22 @@ return [
         [
             'text' => 'Usuarios',
             'route' => 'users.index',
-            'icon'  => 'fas fa-users',
+            'icon'  => 'ri-user-settings-line',
         ],
-        [
-            'text' => 'Dispositivo',
-            'route' => 'devices.index',
-            'icon'  => 'fas fa-briefcase-medical',
-        ],
+        // [
+        //     'text' => 'Dispositivo',
+        //     'route' => 'devices.index',
+        //     'icon'  => 'ri-first-aid-kit-line',
+        // ],
         [
             'text' => 'Escenarios',
             'route' => 'scenarios.index',
-            'icon'  => 'fas fa-bolt',
+            'icon'  => 'ri-aed-line',
         ],
         [
             'text' => 'Instrucciones',
             'route' => 'instructions.index',
-            'icon'  => 'fas fa-bolt',
+            'icon'  => 'ri-aed-electrodes-line',
         ],
         // Navbar items:
         // [

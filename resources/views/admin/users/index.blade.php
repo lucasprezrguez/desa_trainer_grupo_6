@@ -24,7 +24,6 @@
     <table class="table table-striped shadow-sm bg-white rounded results">
         <thead>
             <tr>
-                <th>#</th>
                 <th>Nombre</th>
                 <th>Correo Electrónico</th>
                 <th class="text-right">Acciones</th>
@@ -42,7 +41,6 @@
                         style="cursor: not-allowed;"
                     @endif
                 >
-                    <td>{{ $user->id }}</td>
                     <td>{{ $user->name }} <span class="badge user-role-badge">{{ ucfirst($user->roles) }}</span></td>
                     <td>{{ $user->email }}</td>
                     <td class="text-right">
@@ -214,26 +212,23 @@ $(document).ready(function() {
             $(this).find('a[data-toggle="modal"]').click();
         }
     });
-});
 
-$(document).ready(function() {
     $('.results').DataTable({
         "language": {
             "lengthMenu": "_MENU_",
             "zeroRecords": "No hay resultados.",
             "search": "Buscar:",
         },
-        "ordering": false,
-        "select": true,
-        "paging": true,
-        "autoWidth": true,
-        "responsive": true,
         "layout": {
             "topStart": 'search',
             "topEnd": 'pageLength',
             "bottomStart": null,
             "bottomEnd": 'paging',
-        }
+        },
+        "ordering": false,
+        "paging": true,
+        "autoWidth": true,
+        "responsive": true,
     });
 });
 </script>

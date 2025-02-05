@@ -114,6 +114,11 @@
             // Cambia el mensaje de la pantalla
             const mensajePantalla = document.getElementById("mensajePantalla");
             mensajePantalla.textContent = "NECESARIO COLOCAR ELECTRODOS BIEN";
+            mensajePantalla.style.display = 'flex';
+            mensajePantalla.style.alignItems = 'center';
+            mensajePantalla.style.justifyContent = 'center';
+            mensajePantalla.style.height = '100%'; // Ensure the text is vertically centered
+            mensajePantalla.style.marginLeft = '10px'; // Add left margin to simulate centering
 
             // Espera 5 segundos y luego abre el modal
             setTimeout(() => {

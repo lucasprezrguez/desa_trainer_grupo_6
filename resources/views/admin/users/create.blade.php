@@ -9,7 +9,7 @@
 </div>
 <div class="form-group">
     <label for="roles">Perfil</label>
-    <select name="roles" class="form-control" required>
+    <select name="roles" class="form-control custom-select" required>
         <option value="alumno" selected>Alumno</option>
         <option value="profesor">Profesor</option>
         <option value="admin">Administrador</option>

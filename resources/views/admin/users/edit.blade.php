@@ -10,7 +10,7 @@
 </div>
 <div class="form-group">
     <label for="roles">Perfil</label>
-    <select name="roles" class="form-control" required>
+    <select name="roles" class="form-control custom-select" required>
         <option value="alumno" {{ $user->roles == 'alumno' ? 'selected' : '' }}>Alumno</option>
         <option value="profesor" {{ $user->roles == 'profesor' ? 'selected' : '' }}>Profesor</option>
         <option value="admin" {{ $user->roles == 'admin' ? 'selected' : '' }}>Administrador</option>

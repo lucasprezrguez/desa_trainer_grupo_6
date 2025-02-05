@@ -16,8 +16,8 @@
     <table class="table table-striped shadow-sm bg-white rounded results">
         <thead>
             <tr>
-                <th>Nombre</th>
-                <th>Imagen</th>
+                <th>Escenario</th>
+                <th>Códigos de los escenarios</th>
                 <th class="text-right">Acciones</th>
             </tr>
             <tr class="warning no-result" style="display:none;">
@@ -28,7 +28,7 @@
             @foreach ($scenarios as $scenario)
                 <tr>
                     <td>{{ $scenario->scenario_name }}</td>
-                    <td><img src="{{ asset($scenario->image_url) }}" alt="Imagen del escenario" style="width: auto; height: 36px;"></td>
+                    <td><img src="{{ asset($scenario->image_url) }}" alt="Código del escenario" style="width: auto; height: 36px;"></td>
                     <td class="text-right">
                         <a href="#" class="" data-toggle="modal" data-target="#editInstructionModal-{{ $scenario->id }}">Editar</a>
                     </td>
