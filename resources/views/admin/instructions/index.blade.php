@@ -1,15 +1,16 @@
 @extends('layouts.adminlte')
 
-@section('title', 'Gestión de Instrucciones')
+@section('title', 'Instrucciones')
 
 @section('content_header')
-    <div class="d-flex align-items-center justify-content-between" style="gap: 10px;">
-        <div class="d-flex align-items-center mt-4 mb-2" style="gap: 10px;">
-            <h1>Lista de Instrucciones</h1>
-            <button class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#createInstructionModal">Añadir Nuevo</button>
-        </div>
-    </div>
-    <p class="text-muted w-75">En esta tabla puedes ver todas las instrucciones registradas. Puedes añadir nuevas instrucciones, editar la información existente o eliminar instrucciones que ya no necesites. Usa los botones de acción en cada fila para realizar estas tareas.</p>
+    @component('components.content_header', [
+        'title' => 'Instrucciones',
+        'buttonText' => 'Añadir Nuevo',
+        'buttonTarget' => '#createUserModal',
+        'description' =>
+            'Administra todas las instrucciones registradas desde esta tabla. Puedes añadir nuevas instrucciones, editar la información existente o eliminar instrucciones que ya no necesites. Utiliza el botón de acción Editar en cada fila para realizar estas tareas o bien haz clic en la fila y editarlo.',
+    ])
+    @endcomponent
 @stop
 
 @section('content')

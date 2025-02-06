@@ -9,18 +9,18 @@
         this.backgroundImage = this.isOn ? '{{ asset('images/device_pads.png') }}' : '{{ asset('images/device.png') }}';
     },
     updateBackgroundSize() {
-        setTimeout(() => {
+        this.$nextTick(() => {
             const backgroundImage = document.getElementById('background-image');
             if (!backgroundImage) return;
 
             const { clientWidth: width, clientHeight: height } = backgroundImage;
             document.documentElement.style.setProperty('--w-device', `${width}px`);
             document.documentElement.style.setProperty('--h-device', `${height * 0.87}px`);
-        }, 10);
+        });
     }
 
 }"
-    x-init="updateBackgroundSize()"
+    x-init="updateBackgroundSize(); document.addEventListener('DOMContentLoaded', updateBackgroundSize)"
     @resize.window="updateBackgroundSize()"
     class="w-screen h-screen flex justify-center items-center bg-neutral-800 relative">
     <!-- Imagen de fondo -->
@@ -80,7 +80,7 @@
     <hr class="h-px my-2 bg-gray-200 border-0">
     <!-- Lista de escenarios -->
     <div class="py-4 overflow-y-auto flex-grow">
-        <a href="#" class="text-xs uppercase font-semibold text-gray-500" style="font-family: 'Noto Sans', sans-serif;">AED TRAINER 3<i class="ri-information-line ms-2" data-popover-target="popover-scenario-codes" data-popover-placement="right"></i></a>
+        <h5 class="text-xs uppercase font-semibold text-gray-500">AED TRAINER 3</h5>
         <ul class="space-y-2 font-medium bg-white shadow-sm rounded-lg p-2 mt-2">
             @foreach($scenarios as $scenario)
                 <li>
@@ -99,21 +99,4 @@
             <i class="ri-logout-box-line me-2"></i>Finalizar sesión
         </button>
     </form>
-</div>
-
-<!-- Popover -->
-<div data-popover id="popover-scenario-codes" role="tooltip" class="absolute z-50 invisible inline-block text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-xs opacity-0 w-64" data-popper-placement="right">
-    <div class="px-3 py-2 bg-gray-100 border-b border-gray-200 rounded-t-lg">
-        <h3 class="font-semibold text-gray-900">Códigos de los escenarios</h3>
-    </div>
-    <div class="p-3">
-        <img src="{{ asset('images/scenario_codes.png') }}" class="w-full mb-4" alt="Scenario Codes">
-        <div class="space-y-2">
-            <p>A = Ritmo susceptible de choque</p>
-            <p>B = Ritmo no susceptible de choque</p>
-            <p>C = Problema detectado en los electrodos</p>
-            <p>D = Protocolo RCP primero iniciado</p>
-        </div>
-    </div>
-    <div data-popper-arrow></div>
 </div>

@@ -3,6 +3,11 @@
     padding: 0;
 }
 
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
 /* Navbar styles */
 .navbar-nav {
     gap: 10px;
