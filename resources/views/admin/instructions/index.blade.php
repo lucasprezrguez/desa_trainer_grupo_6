@@ -6,7 +6,7 @@
     @component('components.content_header', [
         'title' => 'Instrucciones',
         'buttonText' => 'Añadir Nuevo',
-        'buttonTarget' => '#createUserModal',
+        'buttonTarget' => '#createInstructionModal',
         'description' =>
             'Administra todas las instrucciones registradas desde esta tabla. Puedes añadir nuevas instrucciones, editar la información existente o eliminar instrucciones que ya no necesites. Utiliza el botón de acción Editar en cada fila para realizar estas tareas o bien haz clic en la fila y editarlo.',
     ])
@@ -18,24 +18,22 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>Contenido</th>
-                <th>Requiere Acción</th>
-                <th>Tipo de Acción</th>
-                <th>Tiempo de Espera</th>
+                <th>Nombre de Instrucción</th>
+                <th>Descripción TTS</th>
+                <th>Tipo</th>
                 <th class="text-right">Acciones</th>
             </tr>
             <tr class="warning no-result" style="display:none;">
-                <td colspan="6">No hay resultados.</td>
+                <td colspan="5">No hay resultados.</td>
             </tr>
         </thead>
         <tbody>
             @foreach ($instructions as $instruction)
                 <tr>
                     <td>{{ $instruction->id }}</td>
-                    <td>{{ $instruction->text_content }}</td>
-                    <td>{{ $instruction->require_action ? 'Sí' : 'No' }}</td>
-                    <td>{{ $instruction->action_type }}</td>
-                    <td>{{ $instruction->waiting_time }}</td>
+                    <td>{{ $instruction->instruction_name }}</td>
+                    <td>{{ $instruction->tts_description }}</td>
+                    <td>{{ $instruction->type }}</td>
                     <td class="text-right">
                         <a href="#" class="" data-toggle="modal" data-target="#editInstructionModal-{{ $instruction->id }}">Editar</a>
                     </td>
@@ -100,75 +98,78 @@
 @stop
 
 @section('js')
-<script>
-function deleteInstruction(instructionId) {
-    const SwalBS = Swal.mixin({
-        customClass: {
-            confirmButton: 'btn btn-light btn-lg text-danger',
-            cancelButton: 'btn btn-light btn-lg'
-        },
-        buttonsStyling: false
-    });
+    <script>
+        function deleteInstruction(instructionId) {
+            const SwalBS = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-light btn-lg text-danger',
+                    cancelButton: 'btn btn-light btn-lg'
+                },
+                buttonsStyling: false
+            });
 
-    SwalBS.fire({
-        title: '¿Eliminar Instrucción?',
-        text: "Esta acción es irreversible.",
-        showCancelButton: true,
-        confirmButtonText: 'Eliminar',
-        cancelButtonText: 'Cancelar',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.getElementById('delete-form-' + instructionId).submit();
+            SwalBS.fire({
+                title: '¿Eliminar Instrucción?',
+                text: "Esta acción es irreversible.",
+                showCancelButton: true,
+                confirmButtonText: 'Eliminar',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + instructionId).submit();
+                }
+            });
         }
-    });
-}
 
-$(document).ready(function() {
-    @if(session('success'))
-        Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            text: '{{ session('success') }}',
-            timer: 3000,
-            timerProgressBar: true,
-            showConfirmButton: false
+        $(document).ready(function() {
+            @if (session('success'))
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    text: '{{ session('success') }}',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+            @endif
+
+            @if (session('error'))
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    text: '{{ session('error') }}',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+            @endif
+
+            $('tbody tr').on('click', function(e) {
+                if (!$(e.target).is('a')) {
+                    $(this).find('a[data-toggle="modal"]').click();
+                }
+            });
+
+            $('.results').DataTable({
+                "language": {
+                    "lengthMenu": "_MENU_",
+                    "zeroRecords": "No hay resultados.",
+                    "search": "Buscar:",
+                },
+                "layout": {
+                    "topStart": 'search',
+                    "topEnd": 'paging',
+                    "bottomStart": null,
+                    "bottomEnd": null,
+                },
+                "ordering": false,
+                "paging": true,
+                "autoWidth": true,
+                "responsive": true,
+            });
         });
-    @endif
-
-    @if(session('error'))
-        Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'error',
-            text: '{{ session('error') }}',
-            timer: 3000,
-            timerProgressBar: true,
-            showConfirmButton: false
-        });
-    @endif
-});
-
-$(document).ready(function() {
-    $('.results').DataTable({
-        "language": {
-            "lengthMenu": "_MENU_",
-            "zeroRecords": "No hay resultados.",
-            "search": "Buscar:",
-        },
-        "ordering": false,
-        "select": true,
-        "paging": true,
-        "autoWidth": true,
-        "responsive": true,
-        "layout": {
-            "topStart": 'search',
-            "topEnd": 'pageLength',
-            "bottomStart": null,
-            "bottomEnd": 'paging',
-        }
-    });
-});
-</script>
+    </script>
 @stop

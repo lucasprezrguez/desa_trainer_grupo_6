@@ -1,24 +1,47 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    #aed-container {
+        width: var(--w-device);
+        height: var(--h-device);
+    }
+</style>
 <div x-data="{
     isOn: false,
     backgroundImage: '{{ asset('images/device.png') }}',
+    logCount: 0, // Contador para el número de veces que se pulsa el botón de descarga
     togglePower() {
         this.isOn = !this.isOn;
         this.backgroundImage = this.isOn ? '{{ asset('images/device_pads.png') }}' : '{{ asset('images/device.png') }}';
+        if (this.isOn) {
+            this.startLogging(); // Iniciar la función cuando el dispositivo se enciende
+        } else {
+            this.logCount = 0; // Reiniciar el contador cuando el dispositivo se apaga
+        }
+    },
+    startLogging() {
+        console.log('Dispositivo encendido. Listo para registrar pulsaciones.');
+    },
+    logShockButtonPress() {
+        if (this.isOn) {
+            this.logCount += 1;
+            console.log({{$scenarioInstruction}});
+            console.log(`Botón de descarga pulsado ${this.logCount} veces.`);
+        } else {
+            console.log('El dispositivo está apagado. Enciéndelo para registrar pulsaciones.');
+        }
     },
     updateBackgroundSize() {
-        this.$nextTick(() => {
+        setTimeout(() => {
             const backgroundImage = document.getElementById('background-image');
             if (!backgroundImage) return;
 
             const { clientWidth: width, clientHeight: height } = backgroundImage;
             document.documentElement.style.setProperty('--w-device', `${width}px`);
             document.documentElement.style.setProperty('--h-device', `${height * 0.87}px`);
-        });
+        }, 10);
     }
-
 }"
     x-init="updateBackgroundSize(); document.addEventListener('DOMContentLoaded', updateBackgroundSize)"
     @resize.window="updateBackgroundSize()"
@@ -27,7 +50,7 @@
     <img id="background-image" :src="backgroundImage" alt="Dispositivo LAERDAL DEA de entrenamiento 3" class="absolute inset-0 mx-auto h-full object-contain drop-shadow-2xl">
     
     <!-- Contenedor del DESA Trainer -->
-    <div class="rounded-lg shadow-3xl w-full h-full flex flex-col justify-between items-center relative" style="width: var(--w-device); height: var(--h-device);">
+    <div id="aed-container" class="rounded-lg shadow-3xl flex flex-col justify-between items-center relative">
         <!-- Contenedor del LED y el botón de encendido/apagado -->
         <div class="flex flex-col items-center justify-between gap-4">
             <!-- LED indicador -->
@@ -42,7 +65,7 @@
             <!-- Contenedor Flexbox -->
             <div class="flex flex-col items-center justify-around w-full h-full">
                 <!-- Botón superior en el marco negro -->
-                <button id="drawer-button" class="text-center font-bold text-2xl text-neutral-400 uppercase border-2 border-black px-4 py-1 rounded-md" type="button" data-drawer-target="drawer-scenarios" data-drawer-show="drawer-scenarios" aria-controls="drawer-scenarios">
+                <button id="drawer-button" class="text-center font-bold text-base sm:text-lg md:text-2xl lg:text-2xl xl:text-2xl text-neutral-400 uppercase border-2 border-black rounded-md px-4 py-2" type="button" data-drawer-target="drawer-scenarios" data-drawer-show="drawer-scenarios" aria-controls="drawer-scenarios">
                     ELEGIR ESCENARIO
                 </button>
                 <!-- Contenido de la pantalla -->
@@ -56,7 +79,7 @@
             </div>
         </div>
         <!-- Botón de descarga -->
-        <button id="shock-button" class="w-32 h-32 flex items-center justify-center text-white font-bold cursor-pointer mb-6 transform active:scale-90">
+        <button @click="logShockButtonPress" id="shock-button" class="w-32 h-32 flex items-center justify-center text-white font-bold cursor-pointer mb-6 transform active:scale-90">
             <img src="{{ asset('images/choque.png') }}" alt="Shock Button" class="object-contain w-full h-full">
         </button>
     </div>

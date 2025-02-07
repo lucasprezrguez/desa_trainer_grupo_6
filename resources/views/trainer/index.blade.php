@@ -32,7 +32,7 @@
             <div class="absolute top-6 left-1/2 transform -translate-x-1/2 mt-[25%] ml-40">
                 <div id="botonInicio" 
                      @click="togglePower"
-                     class="w-28 h-28 bg-green-500 rounded-full border-4 border-white cursor-pointer flex items-center justify-center text-white font-bold text-lg">
+                     class="w-28 h-28 bg-green-500 rounded-full border-4 border-white cursor-pointer flex items-center justify-center text-white font-bold text-lg active:scale-95 active:text-base">
                     INICIO
                 </div>
             </div>
@@ -44,7 +44,7 @@
 
             <!-- Botón rojo -->
             <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 mb-[27%] ml-40">
-                <div class="w-32 h-32 bg-red-500 clip-triangle"></div>
+                <img id="boton-descarga" src="{{ asset('images/boton-descarga-apagado.png') }}" alt="Botón de descarga" class="w-32 h-32 cursor-pointer active:scale-95">
             </div>
         </div>
     </div>
@@ -229,6 +229,66 @@
                 }
             }
         }
+    </script>
+
+    <!-- Botón para abrir la cajonera -->
+    <button id="drawer-button" class="absolute top-4 right-4 bg-gray-500 text-white p-2 rounded-full" type="button" data-drawer-target="drawer-scenarios" data-drawer-show="drawer-scenarios" aria-controls="drawer-scenarios">
+        <i class="ri-menu-line"></i>
+    </button>
+
+    <!-- Cajonera -->
+    <div id="drawer-scenarios" class="fixed top-0 left-0 z-40 h-screen py-2 px-4 overflow-y-auto transition-transform -translate-x-full bg-neutral-50 w-64 flex flex-col rounded-r-2xl shadow-xl" tabindex="-1" aria-labelledby="drawer-scenarios-label">
+        <!-- Encabezado de la Cajonera -->
+        <div class="flex justify-between items-center mb-2">
+            <h5 id="drawer-scenarios-label" class="text-base font-semibold text-gray-500 uppercase">Escenarios</h5>
+            <button type="button" data-drawer-hide="drawer-scenarios" aria-controls="drawer-scenarios" class="text-gray-400 bg-transparent w-8 h-8 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-lg flex items-center justify-center">
+                <i class="ri-close-line"></i>
+                <span class="sr-only">Cerrar</span>
+            </button>
+        </div>
+
+        <!-- Descripción -->
+        <p class="text-sm text-gray-500 mb-2">
+            A continuación, se presentan varios escenarios que puede seleccionar para comenzar la simulación.
+        </p>
+        <hr class="h-px my-2 bg-gray-200 border-0">
+        <!-- Lista de escenarios -->
+        <div class="py-4 overflow-y-auto flex-grow">
+            <h5 class="text-xs uppercase font-semibold text-gray-500">AED TRAINER 3</h5>
+            <ul class="space-y-2 font-medium bg-white shadow-sm rounded-lg p-2 mt-2">
+                @if(isset($scenarios))
+                    @foreach($scenarios as $scenario)
+                        <li>
+                            <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                                <i class="ri-number-{{ $loop->iteration }} text-gray-500"></i>
+                                <img src="{{ asset($scenario->image_url) }}" alt="Escenario {{ $loop->iteration }}" class="w-auto h-8 ms-3">
+                            </a>
+                        </li>
+                    @endforeach
+                @else
+                    <li class="text-gray-500">No hay escenarios disponibles.</li>
+                @endif
+            </ul>
+        </div>
+        <!-- Botón de cerrar sesión -->
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="me-2 mb-2">
+            @csrf
+            <button type="submit" class="text-gray-900 bg-white border border-gray-300 w-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded text-sm px-5 py-2.5">
+                <i class="ri-logout-box-line me-2"></i>Finalizar sesión
+            </button>
+        </form>
+    </div>
+
+    <!-- Botón de prueba para animación de descarga -->
+    <button id="test-button" class="absolute top-4 left-4 bg-blue-500 text-white p-2 rounded-full">
+        Test Descarga
+    </button>
+
+    <script>
+        document.getElementById("test-button").addEventListener("click", function () {
+            const botonDescarga = document.getElementById("boton-descarga");
+            botonDescarga.src = "{{ asset('images/boton-descarga-animacion.gif') }}";
+        });
     </script>
 </body>
 

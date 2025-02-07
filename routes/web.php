@@ -6,6 +6,7 @@ use App\Http\Controllers\DESAController;
 use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\ScenarioController;
 use App\Models\Scenario;
+use App\Models\ScenarioInstruction;
 use App\Http\Middleware\Roles;
 
 // Redirigir a la página de inicio de sesión
@@ -92,7 +93,8 @@ Route::get('/modal-electrodos', function () {
 
 Route::get('trainer/aed', function(){
     $scenarios = Scenario::all();
-    return view('/trainer/aed', compact('scenarios'));
+    $scenarioInstruction = ScenarioInstruction::all();
+    return view('/trainer/aed', compact('scenarios', 'scenarioInstruction'));
 })->name('trainer.aed');
 
 // Test
