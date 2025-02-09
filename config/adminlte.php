@@ -317,7 +317,7 @@ return [
         [
             'text' => 'Instrucciones',
             'route' => 'instructions.index',
-            'icon'  => 'ri-aed-electrodes-line',
+            'icon'  => 'ri-voiceprint-line',
         ],
         // Navbar items:
         // [

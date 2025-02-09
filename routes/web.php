@@ -20,65 +20,64 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    
-});
-Route::get('panel', function () {
-    return view('admin.dashboard');
-})->name('dashboard')->middleware(Roles::class);
+    Route::get('panel', function () {
+        return view('admin.dashboard');
+    })->name('dashboard')->middleware(Roles::class);
 
-// Rutas de usuarios con middleware de autenticación
-Route::middleware(Roles::class)->prefix('panel')->group(function () {
-    Route::resource('usuarios', UserController::class)
-        ->parameters(['usuarios' => 'user'])
-        ->names([
-            'index'   => 'users.index',
-            'create'  => 'users.create',
-            'store'   => 'users.store',
-            'show'    => 'users.show',
-            'edit'    => 'users.edit',
-            'update'  => 'users.update',
-            'destroy' => 'users.destroy',
+    // Rutas de usuarios con middleware de autenticación
+    Route::middleware(Roles::class)->prefix('panel')->group(function () {
+        Route::resource('usuarios', UserController::class)
+            ->parameters(['usuarios' => 'user'])
+            ->names([
+                'index'   => 'users.index',
+                'create'  => 'users.create',
+                'store'   => 'users.store',
+                'show'    => 'users.show',
+                'edit'    => 'users.edit',
+                'update'  => 'users.update',
+                'destroy' => 'users.destroy',
+            ]);
+        Route::post('/users/{user}/generate-password', [UserController::class, 'generatePassword'])->name('users.generatePassword');
+    });
+
+    // Rutas de DESA con middleware de autenticación
+    Route::middleware(Roles::class)->prefix('panel')->group(function () {
+        Route::resource('dispositivos', DESAController::class)->names([
+            'index' => 'devices.index',
+            'create' => 'devices.create',
+            'store' => 'devices.store',
+            'show' => 'devices.show',
+            'edit' => 'devices.edit',
+            'update' => 'devices.update',
+            'destroy' => 'devices.destroy',
         ]);
-    Route::post('/users/{user}/generate-password', [UserController::class, 'generatePassword'])->name('users.generatePassword');
-});
+    });
 
-// Rutas de DESA con middleware de autenticación
-Route::middleware(Roles::class)->prefix('panel')->group(function () {
-    Route::resource('dispositivos', DESAController::class)->names([
-        'index' => 'devices.index',
-        'create' => 'devices.create',
-        'store' => 'devices.store',
-        'show' => 'devices.show',
-        'edit' => 'devices.edit',
-        'update' => 'devices.update',
-        'destroy' => 'devices.destroy',
-    ]);
-});
+    // Rutas de escenarios con middleware de autenticación
+    Route::middleware(Roles::class)->prefix('panel')->group(function () {
+        Route::resource('escenarios', ScenarioController::class)->names([
+            'index' => 'scenarios.index',
+            'create' => 'scenarios.create',
+            'store' => 'scenarios.store',
+            'show' => 'scenarios.show',
+            'edit' => 'scenarios.edit',
+            'update' => 'scenarios.update',
+            'destroy' => 'scenarios.destroy',
+        ]);
+    });
 
-// Rutas de escenarios con middleware de autenticación
-Route::middleware(Roles::class)->prefix('panel')->group(function () {
-    Route::resource('escenarios', ScenarioController::class)->names([
-        'index' => 'scenarios.index',
-        'create' => 'scenarios.create',
-        'store' => 'scenarios.store',
-        'show' => 'scenarios.show',
-        'edit' => 'scenarios.edit',
-        'update' => 'scenarios.update',
-        'destroy' => 'scenarios.destroy',
-    ]);
-});
-
-// Rutas de instrucciones con middleware de autenticación
-Route::middleware(Roles::class)->prefix('panel')->group(function () {
-    Route::resource('instrucciones', InstructionController::class)->names([
-        'index' => 'instructions.index',
-        'create' => 'instructions.create',
-        'store' => 'instructions.store',
-        'show' => 'instructions.show',
-        'edit' => 'instructions.edit',
-        'update' => 'instructions.update',
-        'destroy' => 'instructions.destroy',
-    ]);
+    // Rutas de instrucciones con middleware de autenticación
+    Route::middleware(Roles::class)->prefix('panel')->group(function () {
+        Route::resource('instrucciones', InstructionController::class)->names([
+            'index' => 'instructions.index',
+            'create' => 'instructions.create',
+            'store' => 'instructions.store',
+            'show' => 'instructions.show',
+            'edit' => 'instructions.edit',
+            'update' => 'instructions.update',
+            'destroy' => 'instructions.destroy',
+        ]);
+    });
 });
 
 // Rutas de vistas del entrenador
@@ -89,7 +88,6 @@ Route::get('trainer', function(){
 Route::get('/modal-electrodos', function () {
     return view('trainer.modal-electrodos');
 })->name('ruta.modal.electrodos');
-
 
 Route::get('trainer/aed', function(){
     $scenarios = Scenario::all();

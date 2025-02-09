@@ -1,11 +1,47 @@
+/* Reset styles */
 * {
     margin: 0;
     padding: 0;
 }
 
+/* Container styles */
 .container {
     max-width: 900px;
     margin: 0 auto;
+}
+
+/* Content header styles */
+.content-header {
+    padding: 48px 72px;
+}
+
+/* Table styles */
+table.dataTable.table.table-hover>tbody>tr:hover>* {
+    box-shadow: none;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa !important;
+}
+
+.table td,
+.table th {
+    vertical-align: middle;
+    padding: .5rem;
+}
+
+#DataTables_Table_0_wrapper {
+    padding: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);
+    border-radius: 4px;
+}
+
+.dt-search label {
+    display: none;
+}
+
+.dt-column-order {
+    display: none;
 }
 
 /* Navbar styles */
@@ -32,12 +68,9 @@
     font-size: 12px;
 }
 
+.nav-link.active,
 .nav-link:hover {
-    background-color: #efefef;
-}
-
-.nav-link.active {
-    background-color: #efefef;
+    background-color: rgba(26, 41, 71, 0.04);
 }
 
 .nav-link i {
@@ -46,6 +79,10 @@
 
 .main-header .nav-link {
     height: auto;
+}
+
+.nav-item {
+    width: 100px;
 }
 
 .nav-item .nav-link .logout-text {
@@ -60,4 +97,43 @@
 /* SweetAlert2 actions styles */
 .swal2-actions {
     gap: 10px;
+}
+
+/* Footer styles */
+.main-footer {
+    padding: 1rem 0;
+    margin-top: 48px;
+}
+
+.footer__links {
+    font-size: 12px;
+}
+
+.footer__links a:not(:last-child)::after {
+    content: '•';
+    margin: 0 8px;
+    color: #6c757d;
+}
+
+/* Badge styles */
+.badge {
+    padding: .125rem .5rem;
+    font-size: .75rem;
+    line-height: 1rem;
+    font-weight: 600;
+}
+
+.badge-primary {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.badge-success {
+    background-color: #e5edff;
+    color: #42389d;
+}
+
+.badge-light {
+    background-color: #f3f4f6;
+    color: #1f2937;
 }
