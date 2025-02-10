@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('instructions', function (Blueprint $table) {
             $table->id(); // Clave primaria auto-incremental
-            $table->text('text_content'); // Contenido de texto
+            $table->string('instruction_name');
+            $table->text('tts_description'); // Contenido de texto
             $table->boolean('require_action'); // Indicador de si requiere acción (true/false)
-            $table->enum('action_type', ['discharge', 'electrodes', 'none']); // Tipo de acción con valores específicos
+            $table->enum('type', ['discharge', 'electrodes', 'emergency', 'treatment', 'procedure', 'none']); // Tipo de acción con valores específicos
             $table->integer('waiting_time'); // Tiempo de espera en segundos (u otra unidad)
             $table->timestamps(); // Columnas 'created_at' y 'updated_at'
         });

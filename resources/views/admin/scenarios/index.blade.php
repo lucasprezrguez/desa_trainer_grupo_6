@@ -14,7 +14,7 @@
 @stop
 
 @section('content')
-    <table class="table table-striped shadow-sm bg-white rounded results">
+    <table class="table table-hover results">
         <thead>
             <tr>
                 <th>Escenario</th>

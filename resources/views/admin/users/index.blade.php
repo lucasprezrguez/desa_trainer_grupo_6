@@ -14,16 +14,7 @@
 @stop
 
 @section('content')
-    <style>
-        .user-role-badge {
-            display: none;
-        }
-
-        tr:hover .user-role-badge {
-            display: inline;
-        }
-    </style>
-    <table class="table table-striped shadow-sm bg-white rounded results">
+    <table class="table table-hover results">
         <thead>
             <tr>
                 <th>Nombre</th>
@@ -36,21 +27,27 @@
         </thead>
         <tbody>
             @foreach ($users as $user)
-                <tr
-                    @if (auth()->user()->id !== $user->id) data-toggle="modal" data-target="#editUserModal-{{ $user->id }}" style="cursor: pointer;"
-                    @else
-                        style="cursor: not-allowed;" @endif>
-                    <td>{{ $user->name }} <span class="badge user-role-badge">{{ ucfirst($user->roles) }}</span></td>
-                    <td>{{ $user->email }}</td>
-                    <td class="text-right">
-                        @if (auth()->user()->id !== $user->id)
-                            <a href="#" class="" data-toggle="modal"
-                                data-target="#editUserModal-{{ $user->id }}">Editar</a>
-                        @else
-                            <span class="text-muted">Tú</span>
-                        @endif
-                    </td>
-                </tr>
+                @if (auth()->user()->id !== $user->id)
+                    <tr data-toggle="modal" data-target="#editModal-{{ $user->id }}" style="cursor: pointer;">
+                        <td>
+                            <img src="{{ asset('images/pfp.png') }}" alt="" width="32" height="32" class="mr-2 rounded-circle">{{ $user->name }}
+                        </td>
+                        <td>
+                            @if ($user->roles == 'admin')
+                                <span class="badge badge-primary"><i class="ri-shield-fill mr-1"></i>Administrador</span>
+                            @elseif ($user->roles == 'profesor')
+                                <span class="badge badge-success"><i class="ri-edit-2-fill mr-1"></i>Profesor</span>
+                            @elseif ($user->roles == 'alumno')
+                                <span class="badge badge-light"><i class="ri-eye-fill mr-1"></i>Alumno</span>
+                            @endif
+                        </td>
+                        <td>{{ $user->email }}</td>
+                        <td class="text-right">
+                            <a href="#" class="btn btn-light btn-sm" data-toggle="modal"
+                                data-target="#editModal-{{ $user->id }}"><i class="ri-more-fill"></i></a>
+                        </td>
+                    </tr>
+                @endif
             @endforeach
         </tbody>
     </table>
@@ -240,4 +237,5 @@
             });
         });
     </script>
+    <script src="{{ asset('js/bundle.js') }}"></script>
 @stop

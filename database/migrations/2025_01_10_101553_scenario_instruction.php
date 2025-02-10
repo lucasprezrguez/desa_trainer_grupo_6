@@ -16,7 +16,9 @@ return new class extends Migration
             $table->foreignId('scenario_id')->constrained('scenarios')->onDelete('cascade'); // Llave foránea hacia 'scenarios'
             $table->foreignId('instruction_id')->constrained('instructions')->onDelete('cascade'); // Llave foránea hacia 'instructions'
             $table->integer('order'); // Orden de la instrucción en el escenario
-            $table->timestamps(); // Columnas 'created_at' y 'updated_at'
+            $table->integer('reps')->default(1); // Número de repeticiones
+            $table->longtext('params')->nullable(); // Parámetros adicionales en formato JSON
+            $table->timestamps(); // Campos created_at y updated_at
         });
     }
 

@@ -8,13 +8,13 @@ export default defineConfig({
             refresh: false,
         }),
     ],
-    // server: {
-    //     host: '192.168.221.33',
-    //     port: 3000,
-    //     open: false,
-    //     cors: {
-    //         origin: 'http://192.168.221.33:8000',
-    //         methods: ['GET', 'POST'],
-    //     },
-    // },
+    server: {
+        host: '192.168.221.33',
+        port: 3000,
+        open: false,
+        cors: {
+            origin: 'http://192.168.221.33:8000',
+            methods: ['GET', 'POST'],
+        },
+    },
 });

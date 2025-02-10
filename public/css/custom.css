@@ -8,6 +8,63 @@
     margin: 0 auto;
 }
 
+/* Content header styles */
+.content-header {
+    padding: 1.25rem 4rem;
+}
+
+.content-header p {
+    margin-bottom: 0;
+}
+
+/* Table styles */
+.table {
+    border: 1px solid #e5e7eb;
+}
+table.dataTable.table.table-hover>tbody>tr:hover>* {
+    box-shadow: none;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa !important;
+}
+
+.table thead {
+    background-color: #f9fafb;
+}
+
+.table thead th {
+    border-bottom: none;
+}
+
+.table td,
+.table th {
+    vertical-align: middle;
+    padding: .5rem;
+    border-color: #e5e7eb;
+}
+
+.table th {
+    border-top: none;
+}
+
+.dt-column-title {
+    text-transform: uppercase;
+    font-size: .8rem;
+}
+
+.dt-search label {
+    display: none;
+}
+
+.dt-column-order {
+    display: none;
+}
+
+.dt-container .row {
+    margin-bottom: 1.25rem !important;
+}
+
 /* Navbar styles */
 .navbar-nav {
     gap: 10px;
@@ -60,4 +117,64 @@
 /* SweetAlert2 actions styles */
 .swal2-actions {
     gap: 10px;
+}
+
+/* Footer styles */
+.main-footer {
+    padding: 1rem 0;
+    margin-top: 48px;
+}
+
+.footer__links {
+    font-size: 12px;
+}
+
+.footer__links a:not(:last-child)::after {
+    content: '•';
+    margin: 0 8px;
+    color: #6c757d;
+}
+
+/* Badge styles */
+.badge {
+    padding: .125rem .5rem;
+    font-size: .75rem;
+    line-height: 1rem;
+    font-weight: 600;
+}
+
+.badge-primary {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.badge-success {
+    background-color: #e5edff;
+    color: #42389d;
+}
+
+.badge-light {
+    background-color: #f3f4f6;
+    color: #1f2937;
+}
+
+.user-placeholder {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.page-link {
+    border: none;
+    border-radius: .2rem;
+    padding: .25rem .5rem;
+}
+
+.page-link:hover {
+    background-color: #f8f9fa;
 }

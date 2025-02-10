@@ -7,6 +7,7 @@ use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\ScenarioController;
 use App\Models\Scenario;
 use App\Http\Middleware\Roles;
+use App\Models\Instruction;
 
 // Redirigir a la página de inicio de sesión
 Route::get('/', function () {
@@ -82,7 +83,9 @@ Route::middleware(Roles::class)->prefix('panel')->group(function () {
 
 // Rutas de vistas del entrenador
 Route::get('trainer', function(){
-    return view('/trainer/index');
+    $scenarios = Scenario::all();
+    $scenarioInstruction = ScenarioInstruction::all();
+    return view('/trainer/index', compact('scenarios', 'scenarioInstruction'));
 });
 
 Route::get('/modal-electrodos', function () {
@@ -92,7 +95,9 @@ Route::get('/modal-electrodos', function () {
 
 Route::get('trainer/aed', function(){
     $scenarios = Scenario::all();
-    return view('/trainer/aed', compact('scenarios'));
+    $instructions = Instruction::all();
+    $scenarioInstruction = ScenarioInstruction::all();
+    return view('/trainer/aed', compact('scenarios', 'scenarioInstruction', 'instructions'));
 })->name('trainer.aed');
 
 // Test

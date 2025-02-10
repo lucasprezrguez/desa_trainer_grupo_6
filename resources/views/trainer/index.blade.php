@@ -17,7 +17,10 @@
                 document.documentElement.style.setProperty('--w-device', `${width}px`);
                 document.documentElement.style.setProperty('--h-device', `${height * 0.87}px`);
             }, 10);
-        }
+        },
+        zona1OffsetY: -2, // Offset in pixels for zona-1
+        zona2OffsetY: 2,  // Offset in pixels for zona-2
+        zona2OffsetX: 2   // Offset in pixels for zona-2
     }"
         x-init="updateBackgroundSize()"
         @resize.window="updateBackgroundSize()"
@@ -65,8 +68,8 @@
                 >
 
                 <!-- Zonas de colocación -->
-                <div id="zona-1" class="zona-electrodo absolute top-1/3 left-1/4 w-8 h-8 border-2 border-dashed border-green-500"></div>
-                <div id="zona-2" class="zona-electrodo absolute top-1/3 right-1/4 w-8 h-8 border-2 border-dashed border-green-500"></div>
+                <div id="zona-1" class="zona-electrodo absolute" :style="{ top: `calc(33% + ${zona1OffsetY}px)`, left: '25%' } w-8 h-8 border-2 border-dashed border-green-500 bg-white"></div>
+                <div id="zona-2" class="zona-electrodo absolute" :style="{ top: `calc(33% + ${zona2OffsetY}px)`, right: `calc(25% - ${zona2OffsetX}px)` } w-8 h-8 border-2 border-dashed border-green-500 bg-white"></div>
             </div>
 
             <!-- Electrodos arrastrables -->
