@@ -79,6 +79,11 @@ table.dataTable.table.table-hover>tbody>tr:hover>* {
 }
 
 /* Nav link styles */
+
+.nav-item {
+    width: 100px;
+}
+
 .nav-link {
     display: flex;
     align-items: center;
@@ -90,11 +95,11 @@ table.dataTable.table.table-hover>tbody>tr:hover>* {
 }
 
 .nav-link:hover {
-    background-color: #efefef;
+    background-color: #f9fafb;
 }
 
 .nav-link.active {
-    background-color: #efefef;
+    background-color: #f9fafb;
 }
 
 .nav-link i {
@@ -177,4 +182,14 @@ table.dataTable.table.table-hover>tbody>tr:hover>* {
 
 .page-link:hover {
     background-color: #f8f9fa;
+}
+
+.processing {
+    pointer-events: none;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+.wait-cursor, .wait-cursor * {
+    cursor: wait !important;
 }

@@ -57,7 +57,7 @@ $(document).ready(function() {
     $('.results').DataTable({
         "language": {
             "lengthMenu": "_MENU_",
-            "zeroRecords": "No hay resultados.",
+            "zeroRecords": "¯\\_(ツ)_/¯",
             "search": "Buscar:",
             "paginate": {
                 "previous": "<i class='ri-arrow-left-s-line text-lg'></i>",

@@ -8,6 +8,7 @@ use App\Http\Controllers\ScenarioController;
 use App\Models\Scenario;
 use App\Http\Middleware\Roles;
 use App\Models\Instruction;
+use App\Models\ScenarioInstruction;
 
 // Redirigir a la página de inicio de sesión
 Route::get('/', function () {
@@ -44,7 +45,8 @@ Route::middleware(Roles::class)->prefix('panel')->group(function () {
 
 // Rutas de DESA con middleware de autenticación
 Route::middleware(Roles::class)->prefix('panel')->group(function () {
-    Route::resource('dispositivos', DESAController::class)->names([
+    Route::resource('dispositivos', DESAController::class)
+    ->names([
         'index' => 'devices.index',
         'create' => 'devices.create',
         'store' => 'devices.store',

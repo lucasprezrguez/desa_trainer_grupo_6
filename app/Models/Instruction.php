@@ -12,7 +12,9 @@ class Instruction extends Model
     protected $fillable = [
         'instruction_name',
         'tts_description',
-        'type'
+        'require_action', // Added field
+        'type',
+        'waiting_time' // Added field
     ];
 
     // Cast para parámetros JSON (si se accede desde el pivot)

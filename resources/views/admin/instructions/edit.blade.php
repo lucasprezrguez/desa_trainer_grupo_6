@@ -1,8 +1,12 @@
 @csrf
 @method('PUT')
 <div class="form-group">
-    <label for="text_content">Contenido</label>
-    <textarea name="text_content" class="form-control" required>{{ $instruction->text_content }}</textarea>
+    <label for="instruction_name">Nombre de Instrucción</label>
+    <input type="text" name="instruction_name" class="form-control" value="{{ $instruction->instruction_name }}" required>
+</div>
+<div class="form-group">
+    <label for="tts_description">Descripción TTS</label>
+    <textarea name="tts_description" class="form-control" required>{{ $instruction->tts_description }}</textarea>
 </div>
 <div class="form-group">
     <label for="require_action">Requiere Acción</label>
@@ -12,11 +16,11 @@
     </select>
 </div>
 <div class="form-group">
-    <label for="action_type">Tipo de Acción</label>
-    <select name="action_type" class="form-control" required>
-        <option value="discharge" {{ $instruction->action_type == 'discharge' ? 'selected' : '' }}>Descarga</option>
-        <option value="electrodes" {{ $instruction->action_type == 'electrodes' ? 'selected' : '' }}>Electrodos</option>
-        <option value="none" {{ $instruction->action_type == 'none' ? 'selected' : '' }}>Ninguna</option>
+    <label for="type">Tipo</label>
+    <select name="type" class="form-control" required>
+        <option value="discharge" {{ $instruction->type == 'discharge' ? 'selected' : '' }}>Descarga</option>
+        <option value="electrodes" {{ $instruction->type == 'electrodes' ? 'selected' : '' }}>Electrodos</option>
+        <option value="none" {{ $instruction->type == 'none' ? 'selected' : '' }}>Ninguna</option>
     </select>
 </div>
 <div class="form-group">

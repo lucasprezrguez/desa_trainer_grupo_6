@@ -114,7 +114,7 @@
             </div>
         </div>
         <!-- Botón de descarga -->
-        <button id="shock-button" class="w-32 h-32 flex items-center justify-center text-white font-bold cursor-pointer mb-6 transform active:scale-90">
+        <button @click="logShockButtonPress" id="shock-button" class="w-32 h-32 flex items-center justify-center text-white font-bold cursor-pointer mb-6 transform active:scale-90">
             <img src="{{ asset('images/choque.png') }}" alt="Shock Button" class="object-contain w-full h-full">
         </button>
     </div>

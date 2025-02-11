@@ -3,14 +3,7 @@
 @section('title', 'Usuarios')
 
 @section('content_header')
-    @component('components.content_header', [
-        'title' => 'Usuarios',
-        'buttonText' => 'Añadir Nuevo',
-        'buttonTarget' => '#createUserModal',
-        'description' =>
-            'Administra todos los usuarios registrados desde esta tabla. Puedes añadir nuevos usuarios, editar la información existente o eliminar usuarios que ya no necesites. Utiliza el botón de acción Editar en cada fila para realizar estas tareas o bien haz clic en la fila y editarlo.',
-    ])
-    @endcomponent
+    <x-content-header />
 @stop
 
 @section('content')
@@ -18,6 +11,7 @@
         <thead>
             <tr>
                 <th>Nombre</th>
+                <th>Perfil</th> <!-- Moved this column -->
                 <th>Correo Electrónico</th>
                 <th class="text-right"></th>
             </tr>
@@ -30,7 +24,8 @@
                 @if (auth()->user()->id !== $user->id)
                     <tr data-toggle="modal" data-target="#editModal-{{ $user->id }}" style="cursor: pointer;">
                         <td>
-                            <img src="{{ asset('images/pfp.png') }}" alt="" width="32" height="32" class="mr-2 rounded-circle">{{ $user->name }}
+                            <img src="{{ asset('images/pfp.png') }}" alt="" width="32" height="32"
+                                class="mr-2 rounded-circle">{{ $user->name }}
                         </td>
                         <td>
                             @if ($user->roles == 'admin')
@@ -52,190 +47,85 @@
         </tbody>
     </table>
 
-    <!-- Modal Crear Usuario -->
-    <div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createUserModalLabel">Añadir Usuario</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form action="{{ route('users.store') }}" method="POST">
-                    <div class="modal-body">
-                        @include('admin.users.create')
-                    </div>
-                    <div class="modal-footer d-flex justify-content-start">
-                        <button type="submit" class="btn btn-primary">Añadir</button>
-                        <button type="button" class="btn btn-link" data-dismiss="modal">Cancelar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    <x-modal id="createModal" title="Añadir Usuario" formId="create-form" action="{{ route('users.store') }}"
+        submitText="Añadir" deleteText="Cancelar">
+        @include('admin.users.create')
+    </x-modal>
 
-    <!-- Modal Editar Usuario -->
     @foreach ($users as $user)
-        <div class="modal fade" id="editUserModal-{{ $user->id }}" tabindex="-1" role="dialog"
-            aria-labelledby="editUserModalLabel-{{ $user->id }}" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editUserModalLabel-{{ $user->id }}">Editar Usuario</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form id="edit-form-{{ $user->id }}" action="{{ route('users.update', $user->id) }}"
-                        method="POST">
-                        <div class="modal-body">
-                            @include('admin.users.edit', ['user' => $user])
-                        </div>
-                        <div class="modal-footer d-flex justify-content-between">
-                            <div>
-                                <button type="button" class="btn btn-primary"
-                                    onclick="document.getElementById('edit-form-{{ $user->id }}').submit();">Guardar</button>
-                                <button href="#" class="btn btn-link"
-                                    onclick="generatePassword({{ $user->id }}); return false;"><u>Resetear
-                                        contraseña</u></button>
-                            </div>
-                            <button type="button" class="btn btn-light text-danger"
-                                onclick="deleteUser({{ $user->id }});">Eliminar</button>
-                        </div>
-                    </form>
-                    <form id="delete-form-{{ $user->id }}" action="{{ route('users.destroy', $user->id) }}"
-                        method="POST" style="display:none;">
-                        @csrf
-                        @method('DELETE')
-                    </form>
-                </div>
-            </div>
-        </div>
+        <x-modal id="editModal-{{ $user->id }}" title="Editar Usuario" formId="edit-form-{{ $user->id }}"
+            action="{{ route('users.update', $user->id) }}" submitText="Guardar" deleteText="Eliminar"
+            deleteId="{{ $user->id }}" deleteName="{{ $user->name }}"
+            deleteAction="{{ route('users.destroy', $user->id) }}" resetPassword="{{ $user->id }}">
+            @include('admin.users.edit', ['user' => $user])
+        </x-modal>
     @endforeach
+@stop
+
+@section('footer')
+    <x-footer />
 @stop
 
 @section('js')
     <script>
-        function deleteUser(userId) {
-            const SwalBS = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-light btn-lg text-danger',
-                    cancelButton: 'btn btn-light btn-lg'
-                },
-                buttonsStyling: false
-            });
-
-            SwalBS.fire({
-                title: '¿Eliminar Usuario?',
-                text: "Esta acción es irreversible.",
-                showCancelButton: true,
-                confirmButtonText: 'Eliminar',
-                cancelButtonText: 'Cancelar',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('delete-form-' + userId).submit();
-                }
-            });
-        }
+        window.session = {
+            success: @json(session('success')),
+            error: @json(session('error'))
+        };
 
         function generatePassword(userId) {
-            const resetLink = document.querySelector(`button[onclick="generatePassword(${userId}); return false;"]`);
-            resetLink.style.pointerEvents = 'none';
-            resetLink.style.opacity = '0.5';
-            document.body.style.cursor = 'wait';
+            const resetButton = document.querySelector(`button[data-user-id="${userId}"]`);
 
-            $.ajax({
-                url: '/panel/users/' + userId + '/generate-password',
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    if (response.success) {
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'success',
-                            text: response.message,
-                            timer: 3000,
-                            timerProgressBar: true,
-                            showConfirmButton: false
-                        });
-                    } else {
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'error',
-                            text: response.message,
-                            timer: 3000,
-                            timerProgressBar: true,
-                            showConfirmButton: false
-                        });
-                    }
-                },
-                complete: function() {
-                    resetLink.style.pointerEvents = 'auto';
-                    resetLink.style.opacity = '1';
-                    document.body.style.cursor = 'auto';
+            if (!resetButton) {
+                console.error('Button not found');
+                return;
+            }
+
+            resetButton.classList.add('processing');
+            document.documentElement.classList.add('wait-cursor');
+
+            const toastSettings = {
+                toast: true,
+                position: 'top-end',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            };
+
+            const endpoint = `/panel/users/${encodeURIComponent(userId)}/generate-password`;
+
+            (async () => {
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        credentials: 'same-origin'
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) throw new Error(data.message || 'Request failed');
+
+                    Swal.fire({
+                        ...toastSettings,
+                        icon: 'success',
+                        text: data.message
+                    });
+                } catch (error) {
+                    Swal.fire({
+                        ...toastSettings,
+                        icon: 'error',
+                        text: error.message || 'Error generating password'
+                    });
+                } finally {
+                    resetButton.classList.remove('processing');
+                    document.documentElement.classList.remove('wait-cursor');
                 }
-            });
+            })();
         }
-
-        $(document).ready(function() {
-            @if (session('success'))
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'success',
-                    text: '{{ session('success') }}',
-                    timer: 3000,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                });
-            @endif
-
-            @if (session('error'))
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'error',
-                    text: '{{ session('error') }}',
-                    timer: 3000,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                });
-            @endif
-
-            $('tbody tr').on('click', function(e) {
-                if (!$(e.target).is('a')) {
-                    $(this).find('a[data-toggle="modal"]').click();
-                }
-            });
-
-            $('.results').DataTable({
-                "language": {
-                    "lengthMenu": "_MENU_",
-                    "zeroRecords": "No hay resultados.",
-                    "search": "Buscar:",
-                },
-                "layout": {
-                    "topStart": 'search',
-                    "topEnd": 'paging',
-                    "bottomStart": null,
-                    "bottomEnd": null,
-                },
-                "ordering": false,
-                "paging": true,
-                "autoWidth": true,
-                "responsive": true,
-            });
-        });
     </script>
     <script src="{{ asset('js/bundle.js') }}"></script>
 @stop

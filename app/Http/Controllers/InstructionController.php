@@ -20,16 +20,17 @@ class InstructionController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'text_content' => 'required|string',
+        $validated = $request->validate([
+            'instruction_name' => 'required|string|max:255',
+            'tts_description' => 'required|string',
             'require_action' => 'required|boolean',
-            'action_type' => 'required|in:discharge,electrodes,none',
+            'type' => 'required|string',
             'waiting_time' => 'required|integer',
         ]);
 
-        Instruction::create($request->all());
+        Instruction::create($validated);
 
-        return redirect()->route('instructions.index')->with('success', 'Instrucción creada con éxito.');
+        return redirect()->route('instructions.index')->with('success', 'Instrucción creada exitosamente.');
     }
 
     public function edit(Instruction $instruction)
@@ -39,16 +40,18 @@ class InstructionController extends Controller
 
     public function update(Request $request, Instruction $instruction)
     {
-        $request->validate([
-            'text_content' => 'required|string',
+        $validated = $request->validate([
+            'instruction_name' => 'required|string|max:255',
+            'tts_description' => 'required|string',
             'require_action' => 'required|boolean',
-            'action_type' => 'required|in:discharge,electrodes,none',
+            'type' => 'required|string',
             'waiting_time' => 'required|integer',
         ]);
 
-        $instruction->update($request->all());
+        
+        $instruction->update($validated);
 
-        return redirect()->route('instructions.index')->with('success', 'Instrucción actualizada con éxito.');
+        return redirect()->route('instructions.index')->with('success', 'Instrucción actualizada exitosamente.');
     }
 
     public function destroy(Instruction $instruction)
