@@ -45,9 +45,6 @@
             @include('admin.scenarios.edit', ['scenario' => $scenario])
         </x-modal>
     @endforeach
-@stop
-
-@section('footer')
     <x-footer />
 @stop
 

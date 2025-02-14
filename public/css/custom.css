@@ -13,6 +13,10 @@
     padding: 1.25rem 4rem;
 }
 
+.content-header h1 {
+    font-size: 2.5rem;
+}
+
 .content-header p {
     margin-bottom: 0;
 }

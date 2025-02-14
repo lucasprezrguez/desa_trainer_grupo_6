@@ -10,8 +10,8 @@
     <table class="table table-hover results">
         <thead>
             <tr>
-                <th>Nombre</th>
-                <th>Perfil</th> <!-- Moved this column -->
+                <th>Usuario</th>
+                <th>Perfil</th>
                 <th>Correo Electrónico</th>
                 <th class="text-right"></th>
             </tr>
@@ -24,8 +24,16 @@
                 @if (auth()->user()->id !== $user->id)
                     <tr data-toggle="modal" data-target="#editModal-{{ $user->id }}" style="cursor: pointer;">
                         <td>
-                            <img src="{{ asset('images/pfp.png') }}" alt="" width="32" height="32"
-                                class="mr-2 rounded-circle">{{ $user->name }}
+                            @php
+                                $inicial = strtoupper(substr($user->name, 0, 1));
+                                $colorFondo = \App\Helpers\ColorHelper::generarColorWCAG($user->name);
+                            @endphp
+                            <img src="https://ui-avatars.com/api/?name={{ $inicial }}&background={{ $colorFondo }}&color=ffffff&size=32" 
+                                 alt="{{ $user->name }}" 
+                                 width="32" 
+                                 height="32"
+                                 class="mr-2 rounded-circle">
+                            {{ $user->name }}
                         </td>
                         <td>
                             @if ($user->roles == 'admin')
@@ -46,7 +54,8 @@
             @endforeach
         </tbody>
     </table>
-
+    <x-footer />
+</div>
     <x-modal id="createModal" title="Añadir Usuario" formId="create-form" action="{{ route('users.store') }}"
         submitText="Añadir" deleteText="Cancelar">
         @include('admin.users.create')
@@ -60,10 +69,8 @@
             @include('admin.users.edit', ['user' => $user])
         </x-modal>
     @endforeach
-@stop
 
-@section('footer')
-    <x-footer />
+    
 @stop
 
 @section('js')

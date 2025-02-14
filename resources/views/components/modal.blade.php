@@ -21,7 +21,7 @@ $id = $id ?? md5($attributes->wire('model'));
                     <div>
                         <button type="button" class="btn btn-primary" onclick="document.getElementById('{{ $formId }}').submit();">{{ $submitText }}</button>
                         @if(isset($resetPassword))
-                            <button type="button" class="btn btn-link" data-toggle="popover" title="Reset Password" data-content="This will reset the user's password." data-trigger="hover" data-user-id="{{ $resetPassword }}" onclick="generatePassword({{ $resetPassword }}); return false;"><u>Resetear contraseña</u></button>
+                            <button type="button" class="btn btn-link"  data-user-id="{{ $resetPassword }}" onclick="generatePassword({{ $resetPassword }}); return false;"><u>Resetear contraseña</u></button>
                         @endif
                     </div>
                     @if(isset($deleteId) && isset($deleteName) && isset($deleteAction))

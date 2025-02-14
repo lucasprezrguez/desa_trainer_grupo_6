@@ -10,12 +10,12 @@
     <table class="table table-hover results">
         <thead>
             <tr>
-                <th>Nombre de Instrucción</th>
-                <th>Descripción TTS</th>
+                <th>Instrucción</th>
+                <th>Descripción</th>
                 <th>Acción</th>
                 <th>Tipo</th>
-                <th>Espera (s)</th>
-                <th class="text-right">Acciones</th>
+                <th>Espera</th>
+                <th></th>
             </tr>
             <tr class="warning no-result" style="display:none;">
                 <td colspan="7">No hay resultados.</td>
@@ -51,9 +51,6 @@
             @include('admin.instructions.edit', ['instruction' => $instruction])
         </x-modal>
     @endforeach
-@stop
-
-@section('footer')
     <x-footer />
 @stop
 

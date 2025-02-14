@@ -17,62 +17,55 @@ class ScenarioInstructionSeeder extends Seeder
         $scenario1Instructions = [
             [
                 'scenario_id' => 1,
-                'instruction_id' => 2,
+                'instruction_id' => 1,
                 'order' => 1,
                 'reps' => 1,
                 'params' => 'Analizando el ritmo cardíaco. No toque al paciente. Se recomienda dar una descarga. Se carga el aparato. Manténgase alejado del paciente. Dé una descarga ahora. Pulse el botón naranja'
             ],
             [
                 'scenario_id' => 1,
-                'instruction_id' => 3,
+                'instruction_id' => 1,
                 'order' => 2,
                 'reps' => 1,
                 'params' => 'Se enciende el botón de descarga.'
             ],
             [
                 'scenario_id' => 1,
-                'instruction_id' => 3,
+                'instruction_id' => 2,
                 'order' => 3,
                 'reps' => 1,
                 'params' => 'Esperar hasta que el usuario pulse el botón de descarga.'
             ],
             [
                 'scenario_id' => 1,
-                'instruction_id' => 3,
+                'instruction_id' => 4,
                 'order' => 4,
                 'reps' => 1,
                 'params' => 'Se dio una descarga. En pausa. Inicie resucitación cardio pulmonar'
             ],
             [
                 'scenario_id' => 1,
-                'instruction_id' => 4,
-                'order' => 5,
-                'reps' => 1,
-                'params' => 'Esperar 2 minutos.'
+                'instruction_id' => 3,
+                'order' => 6,
+                'reps' => '0',
+                'params' => 'Se reproduce el audio: Detenga la reanimación cardiopulmonar. Analizando el ritmo cardíaco. Manténgase alejado del paciente. Analizando el ritmo cardíaco.'
             ],
             [
                 'scenario_id' => 1,
-                'instruction_id' => 4,
-                'order' => 6,
+                'instruction_id' => 3,
+                'order' => 7,
                 'reps' => '0',
-                'params' => 'Se reproduce el audio: Detenga la reanimación cardiopulmonar. Analizando el ritmo cardíaco. Manténgase alejado del paciente. Analizando el ritmo cardíaco. No se recomienda dar una descarga. En pausa. Si es necesario, inicie resucitación cardiopulmonar.'
+                'params' => 'No se recomienda dar una descarga. En pausa. Si es necesario, inicie resucitación cardiopulmonar.'
             ]
         ];
 
         $scenario3Instructions = [
             [
                 'scenario_id' => 3,
-                'instruction_id' => 2,
+                'instruction_id' => 1,
                 'order' => 1,
                 'reps' => 1,
                 'params' => 'Apriete los electrodos firmemente sobre la piel desnuda del pecho del paciente'
-            ],
-            [
-                'scenario_id' => 3,
-                'instruction_id' => 3,
-                'order' => 2,
-                'reps' => 1,
-                'params' => 'Espere 10 segundos'
             ],
             [
                 'scenario_id' => 3,
@@ -295,10 +288,6 @@ class ScenarioInstructionSeeder extends Seeder
         foreach ($scenario1Instructions as $scenarioInstruction) {
             ScenarioInstruction::create($scenarioInstruction);
         }
-
-        // foreach ($scenario3Instructions as $scenarioInstruction) {
-        //     ScenarioInstruction::create($scenarioInstruction);
-        // }
 
         foreach ($scenario3Instructions as $scenarioInstruction) {
             ScenarioInstruction::create($scenarioInstruction);

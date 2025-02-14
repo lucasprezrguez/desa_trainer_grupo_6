@@ -5,6 +5,6 @@
     </button>
 </div>
 
-<p class="w-75 text-muted text-sm mt-2">
+<p class="w-75 text-muted mt-2">
     Administra los elementos registrados. Puedes añadir nuevos, actualizar la información existente o eliminar aquellos que ya no sean necesarios. Para modificar un registro, haz clic en el botón de acción o selecciona la fila correspondiente.
 </p>
