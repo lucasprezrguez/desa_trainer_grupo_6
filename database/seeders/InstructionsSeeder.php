@@ -13,8 +13,8 @@ class InstructionsSeeder extends Seeder
         $instructions = [
             [
                 'instruction_name' => 'Análisis de ritmo',
-                'require_action' => true,
-                'waiting_time' => 5
+                'require_action' => false,
+                'waiting_time' => 10
             ],
             [
                 'instruction_name' => 'Administrar descarga',
@@ -23,7 +23,7 @@ class InstructionsSeeder extends Seeder
             ],
             [
                 'instruction_name' => 'Espera de confirmación',
-                'require_action' => true, 
+                'require_action' => false, 
                 'waiting_time' => 15
             ],
             [
