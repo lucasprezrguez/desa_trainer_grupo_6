@@ -30,5 +30,19 @@ class UserSeeder extends Seeder
                 'roles' => in_array($name, ['Sergio Ramos', 'Juanma', 'Lourdes', 'Toñi', 'Maricarmen', 'Marisol']) ? 'profesor' : 'alumno',
             ]);
         }
+
+        /*
+         * Este seeder también crea un usuario administrador inicial con la contraseña 'admin' y el rol 'admin'.
+         * La inclusión de este usuario administrador tiene como objetivo acelerar el proceso de configuración inicial,
+         * permitiendo que el sistema esté listo para su uso inmediato sin necesidad de registrar un usuario administrador
+         * manualmente. Sin embargo, este usuario debe ser eliminado por razones de seguridad en un entorno de producción,
+         * ya que representa un riesgo potencial si se deja sin cambios.
+         */
+        User::create([
+            'name' => 'Admin',
+            'email' => 'admin@mail.com',
+            'password' => Hash::make('admin'),
+            'roles' => 'admin',
+        ]);
     }
 }

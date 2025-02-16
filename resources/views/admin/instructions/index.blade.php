@@ -23,7 +23,7 @@
         </thead>
         <tbody>
             @foreach ($instructions as $instruction)
-                <tr data-toggle="modal" data-target="#editModal-{{ $instruction->id }}" style="cursor: pointer;">
+                <tr data-toggle="modal" data-target="#editModal-{{ $instruction->instruction_id }}" style="cursor: pointer;">
                     <td>{{ $instruction->instruction_name }}</td>
                     <td>{{ $instruction->tts_description }}</td>
                     <td>{{ $instruction->require_action ? 'Sí' : 'No' }}</td>
@@ -31,7 +31,7 @@
                     <td>{{ $instruction->waiting_time }}</td>
                     <td class="text-right">
                         <a href="#" class="btn btn-light btn-sm" data-toggle="modal"
-                            data-target="#editModal-{{ $instruction->id }}"><i class="ri-more-fill"></i></a>
+                            data-target="#editModal-{{ $instruction->instruction_id }}"><i class="ri-more-fill"></i></a>
                     </td>
                 </tr>
             @endforeach
@@ -44,10 +44,10 @@
     </x-modal>
 
     @foreach ($instructions as $instruction)
-        <x-modal id="editModal-{{ $instruction->id }}" title="Editar Instrucción" formId="edit-form-{{ $instruction->id }}"
-            action="{{ route('instructions.update', $instruction->id) }}" submitText="Guardar" deleteText="Eliminar"
-            deleteId="{{ $instruction->id }}" deleteName="{{ $instruction->instruction_name }}"
-            deleteAction="{{ route('instructions.destroy', $instruction->id) }}">
+        <x-modal id="editModal-{{ $instruction->instruction_id }}" title="Editar Instrucción" formId="edit-form-{{ $instruction->instruction_id }}"
+            action="{{ route('instructions.update', $instruction->instruction_id) }}" submitText="Guardar" deleteText="Eliminar"
+            deleteId="{{ $instruction->instruction_id }}" deleteName="{{ $instruction->instruction_name }}"
+            deleteAction="{{ route('instructions.destroy', $instruction->instruction_id) }}">
             @include('admin.instructions.edit', ['instruction' => $instruction])
         </x-modal>
     @endforeach

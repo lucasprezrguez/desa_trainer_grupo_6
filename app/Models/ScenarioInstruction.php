@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ScenarioInstruction extends Pivot
+class ScenarioInstruction extends Model
 {
     use HasFactory;
 
@@ -15,11 +15,23 @@ class ScenarioInstruction extends Pivot
         'scenario_id',
         'instruction_id',
         'order',
-        'repeticiones',
-        'parametros'
+        'reps',
+        'params'
     ];
 
     protected $casts = [
-        'parametros' => 'array'
+        'params' => 'array',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime'
     ];
+
+    public function scenario()
+    {
+        return $this->belongsTo(Scenario::class, 'scenario_id');
+    }
+
+    public function instruction()
+    {
+        return $this->belongsTo(Instruction::class, 'instruction_id');
+    }
 }

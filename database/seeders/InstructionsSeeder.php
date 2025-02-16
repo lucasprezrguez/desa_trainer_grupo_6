@@ -8,46 +8,41 @@ use App\Models\Instruction;
 
 class InstructionsSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
         $instructions = [
             [
-                'instruction_name' => 'Ritmo desfibrilable',
-                'tts_description' => 'Identificar ritmo desfibrilable en el paciente.',
-                'require_action' => false,
-                'type' => 'procedure',
-                'waiting_time' => '5'
+                'instruction_name' => 'Análisis de ritmo',
+                'require_action' => true,
+                'waiting_time' => 5
             ],
             [
-                'instruction_name' => 'Una descarga para conversión',
-                'tts_description' => 'Administrar una descarga eléctrica para conversión de ritmo.',
-                'require_action' => false,
-                'type' => 'treatment',
-                'waiting_time' => '10'
+                'instruction_name' => 'Administrar descarga',
+                'require_action' => true, 
+                'waiting_time' => 10
             ],
             [
-                'instruction_name' => 'Ritmo no desfibrilable',
-                'tts_description' => 'Identificar ritmo no desfibrilable en el paciente.',
-                'require_action' => false,
-                'type' => 'emergency',
-                'waiting_time' => '15'
+                'instruction_name' => 'Espera de confirmación',
+                'require_action' => true, 
+                'waiting_time' => 15
             ],
             [
-                'instruction_name' => 'RCP antes ante ritmo desfibrilable',
-                'tts_description' => 'Realizar RCP antes de analizar ritmo desfibrilable.',
+                'instruction_name' => 'Iniciar RCP',
                 'require_action' => false,
-                'type' => 'procedure',
-                'waiting_time' => '10'
+                'waiting_time' => 120  
+            ],
+            [
+                'instruction_name' => 'Contacto deficiente de los electrodos',
+                'require_action' => true,
+                'waiting_time' => 5
             ]
         ];
 
         foreach ($instructions as $instruction) {
-            Instruction::create($instruction);
+            Instruction::updateOrCreate(
+                ['instruction_name' => $instruction['instruction_name']],
+                $instruction
+            );
         }
     }
 }

@@ -12,6 +12,7 @@
             <tr>
                 <th>Escenario</th>
                 <th>Códigos de los escenarios</th>
+                <th>Instrucciones</th>
                 <th></th>
             </tr>
             <tr class="warning no-result" style="display:none;">
@@ -20,12 +21,13 @@
         </thead>
         <tbody>
             @foreach ($scenarios as $scenario)
-                <tr data-toggle="modal" data-target="#editModal-{{ $scenario->id }}" style="cursor: pointer;">
+                <tr data-toggle="modal" data-target="#editModal-{{ $scenario->scenario_id }}" style="cursor: pointer;">
                     <td>{{ $scenario->scenario_name }}</td>
                     <td><img src="{{ asset($scenario->image_url) }}" alt="Código del escenario" style="width: auto; height: 36px;"></td>
+                    <td>{{ $scenario->instructions_count }}</td>
                     <td class="text-right">
                         <a href="#" class="btn btn-light btn-sm" data-toggle="modal"
-                            data-target="#editModal-{{ $scenario->id }}"><i class="ri-more-fill"></i></a>
+                            data-target="#editModal-{{ $scenario->scenario_id }}"><i class="ri-more-fill"></i></a>
                     </td>
                 </tr>
             @endforeach
@@ -38,10 +40,10 @@
     </x-modal>
 
     @foreach ($scenarios as $scenario)
-        <x-modal id="editModal-{{ $scenario->id }}" title="Editar Escenario" formId="edit-form-{{ $scenario->id }}"
-            action="{{ route('scenarios.update', $scenario->id) }}" submitText="Guardar" deleteText="Eliminar"
-            deleteId="{{ $scenario->id }}" deleteName="{{ $scenario->scenario_name }}"
-            deleteAction="{{ route('scenarios.destroy', $scenario->id) }}">
+        <x-modal id="editModal-{{ $scenario->scenario_id }}" title="Editar Escenario" formId="edit-form-{{ $scenario->scenario_id }}"
+            action="{{ route('scenarios.update', ['scenario' => $scenario->scenario_id]) }}" submitText="Guardar" deleteText="Eliminar"
+            deleteId="{{ $scenario->scenario_id }}" deleteName="{{ $scenario->scenario_name }}"
+            deleteAction="{{ route('scenarios.destroy', ['scenario' => $scenario->scenario_id]) }}">
             @include('admin.scenarios.edit', ['scenario' => $scenario])
         </x-modal>
     @endforeach

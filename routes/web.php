@@ -21,88 +21,74 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    
-});
-Route::get('panel', function () {
-    return view('admin.dashboard');
-})->name('dashboard')->middleware(Roles::class);
+    Route::get('panel', function () {
+        return view('admin.dashboard');
+    })->name('dashboard')->middleware(Roles::class);
 
-// Rutas de usuarios con middleware de autenticación
-Route::middleware(Roles::class)->prefix('panel')->group(function () {
-    Route::resource('usuarios', UserController::class)
-        ->parameters(['usuarios' => 'user'])
-        ->names([
-            'index'   => 'users.index',
-            'create'  => 'users.create',
-            'store'   => 'users.store',
-            'show'    => 'users.show',
-            'edit'    => 'users.edit',
-            'update'  => 'users.update',
-            'destroy' => 'users.destroy',
-        ]);
-    Route::post('/users/{user}/generate-password', [UserController::class, 'generatePassword'])->name('users.generatePassword');
-});
+    // Rutas de usuarios con middleware de autenticación
+    Route::middleware(Roles::class)->prefix('panel')->group(function () {
 
-// Rutas de DESA con middleware de autenticación
-Route::middleware(Roles::class)->prefix('panel')->group(function () {
-    Route::resource('dispositivos', DESAController::class)
-    ->names([
-        'index' => 'devices.index',
-        'create' => 'devices.create',
-        'store' => 'devices.store',
-        'show' => 'devices.show',
-        'edit' => 'devices.edit',
-        'update' => 'devices.update',
-        'destroy' => 'devices.destroy',
-    ]);
-});
+        // Rutas de usuarios con middleware de autenticación
+        Route::resource('usuarios', UserController::class)
+            ->parameters(['usuarios' => 'user']) // Mapea el parámetro 'usuarios' a 'user' en el controlador
+            ->names([
+                'index'   => 'users.index',       // Listar todos los usuarios registrados en el sistema
+                'create'  => 'users.create',      // Mostrar el formulario para crear un nuevo usuario
+                'store'   => 'users.store',       // Guardar un nuevo usuario en la base de datos
+                'show'    => 'users.show',        // Mostrar los detalles de un usuario específico
+                'edit'    => 'users.edit',        // Mostrar el formulario para editar un usuario existente
+                'update'  => 'users.update',      // Actualizar los datos de un usuario existente
+                'destroy' => 'users.destroy',     // Eliminar un usuario del sistema
+            ]);
+        Route::post('/users/{user}/generate-password', [UserController::class, 'generatePassword'])->name('users.generatePassword'); // Generar una nueva contraseña para un usuario específico
 
-// Rutas de escenarios con middleware de autenticación
-Route::middleware(Roles::class)->prefix('panel')->group(function () {
-    Route::resource('escenarios', ScenarioController::class)->names([
-        'index' => 'scenarios.index',
-        'create' => 'scenarios.create',
-        'store' => 'scenarios.store',
-        'show' => 'scenarios.show',
-        'edit' => 'scenarios.edit',
-        'update' => 'scenarios.update',
-        'destroy' => 'scenarios.destroy',
-    ]);
-});
+        // Rutas de escenarios con middleware de autenticación
+        Route::resource('escenarios', ScenarioController::class)
+            ->parameters(['escenarios' => 'scenario']) // Mapea el parámetro 'escenarios' a 'scenario' en el controlador
+            ->names([
+                'index' => 'scenarios.index',      // Listar todos los escenarios disponibles
+                'create' => 'scenarios.create',    // Mostrar el formulario para crear un nuevo escenario
+                'store' => 'scenarios.store',      // Guardar un nuevo escenario en la base de datos
+                'show' => 'scenarios.show',        // Mostrar los detalles de un escenario específico
+                'edit' => 'scenarios.edit',        // Mostrar el formulario para editar un escenario existente
+                'update' => 'scenarios.update',    // Actualizar los datos de un escenario existente
+                'destroy' => 'scenarios.destroy',  // Eliminar un escenario del sistema
+            ]);
 
-// Rutas de instrucciones con middleware de autenticación
-Route::middleware(Roles::class)->prefix('panel')->group(function () {
-    Route::resource('instrucciones', InstructionController::class)->names([
-        'index' => 'instructions.index',
-        'create' => 'instructions.create',
-        'store' => 'instructions.store',
-        'show' => 'instructions.show',
-        'edit' => 'instructions.edit',
-        'update' => 'instructions.update',
-        'destroy' => 'instructions.destroy',
-    ]);
-});
+        // Rutas de instrucciones con middleware de autenticación
+        Route::resource('instrucciones', InstructionController::class)
+            ->parameters(['instrucciones' => 'instructions']) // Mapea el parámetro 'instrucciones' a 'instructions' en el controlador
+            ->names([
+                'index' => 'instructions.index',      // Listar todas las instrucciones disponibles
+                'create' => 'instructions.create',    // Mostrar el formulario para crear una nueva instrucción
+                'store' => 'instructions.store',      // Guardar una nueva instrucción en la base de datos
+                'show' => 'instructions.show',        // Mostrar los detalles de una instrucción específica
+                'edit' => 'instructions.edit',        // Mostrar el formulario para editar una instrucción existente
+                'update' => 'instructions.update',    // Actualizar los datos de una instrucción existente
+                'destroy' => 'instructions.destroy',  // Eliminar una instrucción del sistema
+            ]);
+    });
 
-// Rutas de vistas del entrenador
-Route::get('trainer', function(){
-    $scenarios = Scenario::all();
-    $scenarioInstruction = ScenarioInstruction::all();
-    return view('/trainer/index', compact('scenarios', 'scenarioInstruction'));
-});
+    // Rutas de vistas del entrenador
+    Route::get('trainer', function(){
+        $scenarios = Scenario::all();
+        $scenarioInstruction = ScenarioInstruction::all();
+        return view('/trainer/index', compact('scenarios', 'scenarioInstruction'));
+    });
 
-Route::get('/modal-electrodos', function () {
-    return view('trainer.modal-electrodos');
-})->name('ruta.modal.electrodos');
+    Route::get('/modal-electrodos', function () {
+        return view('trainer.modal-electrodos');
+    })->name('ruta.modal.electrodos');
 
+    Route::get('trainer/aed', function(){
+        $scenarios = Scenario::all();
+        $instructions = Instruction::all();
+        $scenarioInstruction = ScenarioInstruction::all();
+        return view('/trainer/aed', compact('scenarios', 'scenarioInstruction', 'instructions'));
+    })->name('trainer.aed');
 
-Route::get('trainer/aed', function(){
-    $scenarios = Scenario::all();
-    $instructions = Instruction::all();
-    $scenarioInstruction = ScenarioInstruction::all();
-    return view('/trainer/aed', compact('scenarios', 'scenarioInstruction', 'instructions'));
-})->name('trainer.aed');
-
-// Test
-Route::get('/electrodo', function () {
-    return view('trainer.electrodo'); 
+    // Ruta de prueba
+    Route::get('/electrodo', function () {
+        return view('trainer.electrodo'); 
+    });
 });

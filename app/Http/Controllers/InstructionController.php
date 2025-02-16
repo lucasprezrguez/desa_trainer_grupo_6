@@ -33,12 +33,13 @@ class InstructionController extends Controller
         return redirect()->route('instructions.index')->with('success', 'Instrucción creada exitosamente.');
     }
 
-    public function edit(Instruction $instruction)
+    public function edit($instruction_id)
     {
+        $instruction = Instruction::findOrFail($instruction_id);
         return view('admin.instructions.edit', compact('instruction'));
     }
 
-    public function update(Request $request, Instruction $instruction)
+    public function update(Request $request, $instruction_id)
     {
         $validated = $request->validate([
             'instruction_name' => 'required|string|max:255',
@@ -48,14 +49,15 @@ class InstructionController extends Controller
             'waiting_time' => 'required|integer',
         ]);
 
-        
+        $instruction = Instruction::findOrFail($instruction_id);
         $instruction->update($validated);
 
         return redirect()->route('instructions.index')->with('success', 'Instrucción actualizada exitosamente.');
     }
 
-    public function destroy(Instruction $instruction)
+    public function destroy($instruction_id)
     {
+        $instruction = Instruction::findOrFail($instruction_id);
         $instruction->delete();
         return redirect()->route('instructions.index')->with('success', 'Instrucción eliminada con éxito.');
     }

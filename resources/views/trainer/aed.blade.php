@@ -6,26 +6,13 @@
             width: var(--w-device);
             height: var(--h-device);
         }
-
-        @keyframes blink {
-            0%, 100% {
-                filter: drop-shadow(0 0 10px yellow);
-            }
-            50% {
-                filter: drop-shadow(0 0 20px yellow);
-            }
-        }
-
-        #shock-button {
-            animation: blink 1s infinite;
-        }
     </style>
     <div x-data="{
         isOn: false,
         backgroundImage: '{{ asset('images/device.png') }}',
         logCount: 0, // Contador para el número de veces que se pulsa el botón de descarga
         scenarioInstruction: {{ $scenarioInstruction }},
-        instructions: {{ $instructions}},
+        instructions: {{$instructions}},
         currentInstruction: null,
         screen: '',
         showImage: true,
@@ -33,23 +20,29 @@
         scenarioInstructionSelected: null,
     
         selectScenario(id) {
+            
             this.selectedScenarioId = id;
-    
             this.isOn = true;
             this.backgroundImage = this.isOn ? '{{ asset('images/device_pads.png') }}' : '{{ asset('images/device.png') }}';
             this.screen = '';
             this.logCount = 0;
-    
+
             confirm('¿Estás seguro de que quieres empezar la simulación?');
-    
+
             this.scenarioInstructionSelected = this.scenarioInstruction.filter(
                 scenario => scenario.scenario_id == this.selectedScenarioId
             );
-    
+
+            console.log('🔎 Filtradas Instrucciones:', this.scenarioInstructionSelected);
+
+            if (!this.scenarioInstructionSelected.length) {
+                console.error('⚠️ No se encontraron instrucciones para este escenario.');
+                return;
+            }
+
             this.$refs.closeButton.click();
-    
-            console.log('Selected scenario id: ', this.selectedScenarioId);
-    
+            console.log('✅ Selected scenario id: ', this.selectedScenarioId);
+
             this.logShockButtonPress();
         },
         togglePower() {
@@ -64,45 +57,57 @@
             }
         },
         logShockButtonPress() {
-            // if (!this.isOn) {
-            //     console.log('El dispositivo está apagado. Enciéndelo para registrar pulsaciones.');
-            //     return;
-            // }
+            if (!this.scenarioInstructionSelected || !this.scenarioInstructionSelected.length) {
+                console.error('❌ No hay instrucciones seleccionadas.');
+                return;
+            }
 
-            if (this.logCount < this.scenarioInstructionSelected.length) {
-                console.log('CONTADOR: ', this.logCount);
-                console.log(this.scenarioInstructionSelected);
-                this.currentInstruction = this.instructions.find(
-                    instruction => instruction.id === Number(this.scenarioInstructionSelected[this.logCount]?.instruction_id)
-                );
-
-                const utterance = new SpeechSynthesisUtterance(this.scenarioInstructionSelected[this.logCount].params);
-                speechSynthesis.cancel();
-
-                console.log(`Instrucción actual: `, this.currentInstruction);
-
-                if (this.currentInstruction.require_action) {
-                    // Si requiere acción, se muestra inmediatamente
-                    this.showImage = false;
-                    this.screen = this.scenarioInstructionSelected[this.logCount].params;
-                    speechSynthesis.speak(utterance);
-                    this.logCount += 1;
-                } else {
-                    // Si no requiere acción, espera el tiempo definido en waiting_time antes de avanzar
-                    console.log(`Esperando ${this.currentInstruction.waiting_time} segundos antes de avanzar...`);
-                    this.showImage = false;
-                    this.screen = this.scenarioInstructionSelected[this.logCount].params;
-                    speechSynthesis.speak(utterance);
-                    setTimeout(() => {
-                        this.logCount += 1;
-                        this.logShockButtonPress();
-                    }, this.currentInstruction.waiting_time * 1000);
-                }
-            } else {
-                // Reiniciar en caso de completar todas las instrucciones
+            if (this.logCount >= this.scenarioInstructionSelected.length) {
+                console.log('✅ Todas las instrucciones han sido ejecutadas.');
                 this.logCount = 0;
                 this.showImage = true;
                 this.togglePower();
+                return;
+            }
+
+            console.log('CONTADOR: ', this.logCount);
+            console.log('🔎 Instrucción actual:', this.scenarioInstructionSelected[this.logCount]);
+
+            const currentScenarioInstruction = this.scenarioInstructionSelected[this.logCount];
+
+            if (!currentScenarioInstruction) {
+                console.error(`⚠️ No hay instrucción en la posición ${this.logCount}`);
+                return;
+            }
+
+            this.currentInstruction = this.instructions.find(
+                instruction => parseInt(instruction.instruction_id) === parseInt(currentScenarioInstruction.instruction_id)
+            );
+
+            if (!this.currentInstruction) {
+                console.error(`⚠️ No se encontró la instrucción con ID ${currentScenarioInstruction.instruction_id}`);
+                return;
+            }
+
+            console.log(`Instrucción actual: `, this.currentInstruction);
+
+            const utterance = new SpeechSynthesisUtterance(currentScenarioInstruction.params);
+            speechSynthesis.cancel();
+
+            if (this.currentInstruction.require_action) {
+                this.showImage = false;
+                this.screen = currentScenarioInstruction.params;
+                speechSynthesis.speak(utterance);
+                this.logCount += 1;
+            } else {
+                console.log(`Esperando ${this.currentInstruction.waiting_time} segundos antes de avanzar...`);
+                this.showImage = false;
+                this.screen = currentScenarioInstruction.params;
+                speechSynthesis.speak(utterance);
+                setTimeout(() => {
+                    this.logCount += 1;
+                    this.logShockButtonPress();
+                }, this.currentInstruction.waiting_time * 1000);
             }
         },
         updateBackgroundSize() {
@@ -197,7 +202,7 @@
                     @foreach ($scenarios as $scenario)
                         <li style="cursor: pointer;">
                             <a class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group w-full"
-                                @click="selectScenario({{ json_encode($scenario->id) }})">
+                                @click="selectScenario({{ $scenario->scenario_id }})">
                                 <img src="{{ asset($scenario->image_url) }}" alt="Escenario {{ $loop->iteration }}"
                                     class="w-auto h-8">
                             </a>

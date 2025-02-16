@@ -3,15 +3,17 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->call(UserSeeder::class);
-        $this->call(ScenarioSeeder::class);
-        $this->call(ScenarioInstructionSeeder::class);
+        $this->call([
+            UserSeeder::class,
+            ScenarioSeeder::class,
+            InstructionsSeeder::class,
+            ScenarioInstructionSeeder::class,
+        ]);
     }
 }
