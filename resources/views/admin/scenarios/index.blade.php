@@ -12,7 +12,7 @@
             <tr>
                 <th>Escenario</th>
                 <th>Códigos de los escenarios</th>
-                <th>Instrucciones</th>
+                <th class="text-center">Instrucciones</th>
                 <th></th>
             </tr>
             <tr class="warning no-result" style="display:none;">
@@ -24,7 +24,7 @@
                 <tr data-toggle="modal" data-target="#editModal-{{ $scenario->scenario_id }}" style="cursor: pointer;">
                     <td>{{ $scenario->scenario_name }}</td>
                     <td><img src="{{ asset($scenario->image_url) }}" alt="Código del escenario" style="width: auto; height: 36px;"></td>
-                    <td>{{ $scenario->instructions_count }}</td>
+                    <td class="text-center"><span class="badge badge-light">{{ $scenario->instructions_count }}</span></td>
                     <td class="text-right">
                         <a href="#" class="btn btn-light btn-sm" data-toggle="modal"
                             data-target="#editModal-{{ $scenario->scenario_id }}"><i class="ri-more-fill"></i></a>

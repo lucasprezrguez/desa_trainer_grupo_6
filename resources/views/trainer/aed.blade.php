@@ -6,7 +6,25 @@
             width: var(--w-device);
             height: var(--h-device);
         }
+        #countdown-timer {
+            display: inline-block;
+        }
+        #progress-bar {
+            width: 80%;
+            height: 4px;
+            background-color: #5c5c5c;
+            border-radius: 25px;
+            overflow: hidden;
+            display: inline-block;
+        }
+        #progress-bar-fill {
+            height: 100%;
+            background-color: #ffb900;
+            width: 0;
+            transition: width 0.1s;
+        }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <div x-data="{
         isOn: false,
         backgroundImage: '{{ asset('images/device.png') }}',
@@ -18,6 +36,7 @@
         showImage: true,
         selectedScenarioId: 0,
         scenarioInstructionSelected: null,
+        countdownInterval: null,
     
         selectScenario(id) {
             
@@ -104,11 +123,34 @@
                 this.showImage = false;
                 this.screen = currentScenarioInstruction.params;
                 speechSynthesis.speak(utterance);
+                this.startProgressBar(this.currentInstruction.waiting_time);
+                this.startCountdown(this.currentInstruction.waiting_time);
                 setTimeout(() => {
+                    clearInterval(this.countdownInterval);
                     this.logCount += 1;
                     this.logShockButtonPress();
                 }, this.currentInstruction.waiting_time * 1000);
             }
+        },
+        startProgressBar(waitingTime) {
+            $('#progress-bar-fill').css('width', '0');
+            $('#progress-bar-fill').animate({ width: '100%' }, waitingTime * 1000);
+        },
+        startCountdown(waitingTime) {
+            let remainingTime = waitingTime;
+            $('#countdown-timer').text(this.formatTime(remainingTime));
+            this.countdownInterval = setInterval(() => {
+                remainingTime -= 1;
+                $('#countdown-timer').text(this.formatTime(remainingTime));
+                if (remainingTime <= 0) {
+                    clearInterval(this.countdownInterval);
+                }
+            }, 1000);
+        },
+        formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
         },
         updateBackgroundSize() {
             this.$nextTick(() => {
@@ -150,12 +192,9 @@
                 <!-- Contenedor Flexbox -->
                 <div class="flex flex-col items-center justify-around w-full h-full">
                     <!-- Botón superior en el marco negro -->
-                    <button id="drawer-button" @click="drawerOpen = true"
-                        class="text-center font-bold text-xl text-neutral-400 uppercase border-2 border-black rounded-md py-1 px-4"
-                        type="button" data-drawer-target="drawer-scenarios" data-drawer-show="drawer-scenarios"
-                        aria-controls="drawer-scenarios">
-                        ELEGIR ESCENARIO
-                    </button>
+                    <p class="text-center font-bold text-xl text-neutral-400 uppercase border-2 border-black rounded-md py-1 px-4">
+                        SOLO ENTRENAMIENTO
+                    </p>
                     <!-- Contenido de la pantalla (Texto dinámico) -->
                     <div
                         class="w-[80%] aspect-[1.21] flex items-center justify-center bg-black text-white text-2xl font-bold rounded-3xl">
@@ -163,10 +202,19 @@
                             class="object-contain rounded-3xl max-w-full max-h-full">
                         <span x-text="screen" class="screen-text text-sm"></span>
                     </div>
-                    <!-- Logo en el marco negro -->
-                    <div class="flex flex-col items-center text-center text-sm font-light text-white">
-                        <img src="{{ asset('images/laerdal.png') }}" alt="Laerdal Logo" class="w-[30%] object-contain">
+                    <!-- Barra de progreso y contador -->
+                    <div class="flex items-center justify-center w-[80%]">
+                        <button id="drawer-button" @click="drawerOpen = true" href="" class="animate-pulse underline text-amber-400" x-show="!selectedScenarioId" type="button" data-drawer-target="drawer-scenarios" data-drawer-show="drawer-scenarios"
+                        aria-controls="drawer-scenarios">Elegir escenario</button>
+                        <div id="progress-bar" x-show="selectedScenarioId">
+                            <div id="progress-bar-fill"></div>
+                        </div>
+                        <div id="countdown-timer" class="font-mono text-xs text-neutral-50 ms-1" x-show="selectedScenarioId"></div>
                     </div>
+                    <!-- Logo en el marco negro -->
+                    {{-- <div class="flex flex-col items-center text-center text-sm font-light text-white">
+                        <img src="{{ asset('images/laerdal.png') }}" alt="Laerdal Logo" class="w-[30%] object-contain">
+                    </div> --}}
                 </div>
             </div>
             <!-- Botón de descarga -->
