@@ -9,11 +9,11 @@ export default defineConfig({
         }),
     ],
     server: {
-        host: '192.168.221.33',
+        host: 'localhost',
         port: 3000,
         open: false,
         cors: {
-            origin: 'http://192.168.221.33:8000',
+            origin: 'http://127.0.0.1:8000',
             methods: ['GET', 'POST'],
         },
     },
