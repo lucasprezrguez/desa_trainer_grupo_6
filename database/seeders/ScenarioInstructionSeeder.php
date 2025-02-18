@@ -69,7 +69,7 @@ class ScenarioInstructionSeeder extends Seeder
             ],
             [
                 'scenario_id' => 2,
-                'instruction_id' => 3,
+                'instruction_id' => 4,
                 'order' => 2,
                 'reps' => 1,
                 'params' => 'No se recomienda dar una descarga. Inicie reanimación cardiopulmonar.'
@@ -94,6 +94,13 @@ class ScenarioInstructionSeeder extends Seeder
                 'order' => 5,
                 'reps' => 1,
                 'params' => 'Pulse el botón de descarga.'
+            ],
+            [
+                'scenario_id' => 2,
+                'instruction_id' => 4,
+                'order' => 4,
+                'reps' => 1,
+                'params' => 'Se dio una descarga. En pausa. Inicie reanimación cardiopulmonar'
             ],
             [
                 'scenario_id' => 2,
