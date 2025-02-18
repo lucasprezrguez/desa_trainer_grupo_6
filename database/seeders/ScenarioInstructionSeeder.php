@@ -20,42 +20,42 @@ class ScenarioInstructionSeeder extends Seeder
                 'instruction_id' => 1,
                 'order' => 1,
                 'reps' => 1,
-                'params' => 'Analizando el ritmo cardíaco. No toque al paciente. Se recomienda dar una descarga. Manténgase alejado del paciente.'
+                'params' => 'Analizando el ritmo cardíaco. Manténgase alejado del paciente.'
             ],
             [
                 'scenario_id' => 1,
                 'instruction_id' => 1,
                 'order' => 2,
                 'reps' => 1,
-                'params' => 'Se enciende el botón de descarga.'
+                'params' => 'Se recomienda dar una descarga. Manténgase alejado del paciente.'
             ],
             [
                 'scenario_id' => 1,
                 'instruction_id' => 2,
                 'order' => 3,
                 'reps' => 1,
-                'params' => 'Dé una descarga.'
+                'params' => 'Pulse el botón de descarga.'
             ],
             [
                 'scenario_id' => 1,
                 'instruction_id' => 4,
                 'order' => 4,
                 'reps' => 1,
-                'params' => 'Se dio una descarga. En pausa. Inicie resucitación cardio pulmonar'
+                'params' => 'Se dio una descarga. En pausa. Inicie reanimación cardiopulmonar.'
             ],
             [
                 'scenario_id' => 1,
                 'instruction_id' => 1,
                 'order' => 5,
                 'reps' => 0,
-                'params' => 'Detenga la reanimación cardiopulmonar. Analizando el ritmo cardíaco. Manténgase alejado del paciente. Analizando el ritmo cardíaco.'
+                'params' => 'Detenga la reanimación cardiopulmonar. Analizando el ritmo cardíaco. Manténgase alejado del paciente.'
             ],
             [
                 'scenario_id' => 1,
                 'instruction_id' => 3,
                 'order' => 6,
                 'reps' => 0,
-                'params' => 'No se recomienda dar una descarga. En pausa. Si es necesario, inicie resucitación cardiopulmonar.'
+                'params' => 'No se recomienda dar una descarga. En pausa. Si es necesario, inicie reanimación cardiopulmonar.'
             ]
         ];
 
@@ -72,7 +72,7 @@ class ScenarioInstructionSeeder extends Seeder
                 'instruction_id' => 3,
                 'order' => 2,
                 'reps' => 1,
-                'params' => 'No se recomienda dar una descarga. Inicie resucitación cardiopulmonar.'
+                'params' => 'No se recomienda dar una descarga. Inicie reanimación cardiopulmonar.'
             ],
             [
                 'scenario_id' => 2,
@@ -93,7 +93,7 @@ class ScenarioInstructionSeeder extends Seeder
                 'instruction_id' => 2,
                 'order' => 5,
                 'reps' => 1,
-                'params' => 'Dé una descarga.'
+                'params' => 'Pulse el botón de descarga.'
             ],
             [
                 'scenario_id' => 2,
@@ -107,7 +107,7 @@ class ScenarioInstructionSeeder extends Seeder
                 'instruction_id' => 3,
                 'order' => 7,
                 'reps' => 0,
-                'params' => 'No se recomienda dar una descarga. Si es necesario, inicie resucitación cardiopulmonar.'
+                'params' => 'No se recomienda dar una descarga. Si es necesario, inicie reanimación cardiopulmonar.'
             ]
         ];
 
@@ -117,46 +117,44 @@ class ScenarioInstructionSeeder extends Seeder
                 'instruction_id' => 5,
                 'order' => 1,
                 'reps' => 1,
-                'params' => 'Apriete los electrodos firmemente sobre la piel desnuda del pecho del paciente'
+                'params' => 'Apriete los electrodos firmemente sobre la piel desnuda del pecho del paciente. Pulse el botón de descarga para continuar.'
             ],
             [
                 'scenario_id' => 3,
                 'instruction_id' => 1,
                 'order' => 2,
                 'reps' => 1,
-                'params' => 'Analizando el ritmo cardíaco. No toque al paciente. Se recomienda dar una descarga. Manténgase alejado del paciente. '
+                'params' => 'Analizando el ritmo cardíaco. No toque al paciente. Manténgase alejado del paciente.'
             ],
             [
                 'scenario_id' => 3,
                 'instruction_id' => 2,
                 'order' => 3,
                 'reps' => 1,
-                'params' => 'Pulse el botón de descarga'
+                'params' => 'Pulse el botón de descarga.'
             ],
             [
                 'scenario_id' => 3,
                 'instruction_id' => 4,
                 'order' => 4,
                 'reps' => 1,
-                'params' => 'Se dio una descarga. Inicie resucitación cardio pulmonar'
+                'params' => 'Se dio una descarga. Inicie reanimación cardiopulmonar.'
             ],
             [
                 'scenario_id' => 3,
                 'instruction_id' => 1,
                 'order' => 5,
                 'reps' => 0,
-                'params' => 'Detenga la resucitación cardiopulmonar. Manténgase alejado del paciente. Analizando el ritmo cardíaco.'
+                'params' => 'Detenga la reanimación cardiopulmonar. Manténgase alejado del paciente. Analizando el ritmo cardíaco.'
             ],
             [
                 'scenario_id' => 3,
                 'instruction_id' => 3,
                 'order' => 6,
                 'reps' => 0,
-                'params' => 'No se recomienda dar una descarga. Si es necesario, inicie resucitación cardiopulmonar.'
+                'params' => 'No se recomienda dar una descarga. Si es necesario, inicie reanimación cardiopulmonar.'
             ]
         ];
-
-        //escenario 4
 
         $scenario4Instructions = [
             [
@@ -164,74 +162,79 @@ class ScenarioInstructionSeeder extends Seeder
                 'instruction_id' => 1,
                 'order' => 1,
                 'reps' => 1,
-                'params' => 'Analizando el ritmo cardíaco. No toque al paciente. Se recomienda dar una descarga. Manténgase alejado del paciente. '
+                'params' => 'Analizando el ritmo cardíaco. Manténgase alejado del paciente.'
             ],
             [
                 'scenario_id' => 4,
                 'instruction_id' => 2,
                 'order' => 2,
                 'reps' => 1,
-                'params' => 'Pulse el botón de descarga'
+                'params' => 'Pulse el botón de descarga.'
             ],
             [
                 'scenario_id' => 4,
                 'instruction_id' => 4,
                 'order' => 3,
                 'reps' => 1,
-                'params' => 'Se dio una descarga. Inicie resucitación cardio pulmonar'
+                'params' => 'Se dio una descarga. Inicie reanimación cardiopulmonar.'
             ],
             [
                 'scenario_id' => 4,
                 'instruction_id' => 1,
                 'order' => 4,
                 'reps' => 1,
-                'params' => 'Detenga la reanimación cardiopulmonar. Analizando el ritmo cardíaco. Manténgase alejado del paciente. Analizando el ritmo cardíaco.'
+                'params' => 'Detenga la reanimación cardiopulmonar. Analizando el ritmo cardíaco. Manténgase alejado del paciente.'
             ],
             [
                 'scenario_id' => 4,
                 'instruction_id' => 4,
                 'order' => 5,
                 'reps' => 1,
-                'params' => 'No se recomienda dar una descarga. Inicie resucitación cardiopulmonar.'
+                'params' => 'No se recomienda dar una descarga. Inicie reanimación cardiopulmonar.'
             ],
             [
                 'scenario_id' => 4,
                 'instruction_id' => 1,
                 'order' => 6,
                 'reps' => 1,
-                'params' => 'Analizando el ritmo cardíaco. No toque al paciente. Se recomienda dar una descarga. Manténgase alejado del paciente. '
+                'params' => 'Analizando el ritmo cardíaco. Manténgase alejado del paciente.'
+            ],
+            [
+                'scenario_id' => 4,
+                'instruction_id' => 1,
+                'order' => 2,
+                'reps' => 1,
+                'params' => 'Se recomienda dar una descarga. Manténgase alejado del paciente.'
             ],
             [
                 'scenario_id' => 4,
                 'instruction_id' => 2,
                 'order' => 7,
                 'reps' => 1,
-                'params' => 'Pulse el botón de descarga'
+                'params' => 'Pulse el botón de descarga.'
             ],
             [
                 'scenario_id' => 4,
                 'instruction_id' => 4,
                 'order' => 8,
                 'reps' => 1,
-                'params' => 'Se dio una descarga. Inicie resucitación cardio pulmonar'
+                'params' => 'Se dio una descarga. Inicie reanimación cardiopulmonar.'
             ],
             [
                 'scenario_id' => 4,
                 'instruction_id' => 1,
                 'order' => 9,
                 'reps' => 1,
-                'params' => 'Detenga la reanimación cardiopulmonar. Analizando el ritmo cardíaco. Manténgase alejado del paciente. Analizando el ritmo cardíaco.'
+                'params' => 'Detenga la reanimación cardiopulmonar. Analizando el ritmo cardíaco. Manténgase alejado del paciente.'
             ],
             [
                 'scenario_id' => 4,
                 'instruction_id' => 3,
                 'order' => 10,
                 'reps' => 0,
-                'params' => 'No se recomienda dar una descarga. Inicie resucitación cardiopulmonar.'
+                'params' => 'No se recomienda dar una descarga. Inicie reanimación cardiopulmonar.'
             ]
         ];
-
-        //escenario 5
 
         $scenario5Instructions = [
             [
@@ -239,14 +242,14 @@ class ScenarioInstructionSeeder extends Seeder
                 'instruction_id' => 1,
                 'order' => 1,
                 'reps' => 1,
-                'params' => 'Detenga la reanimación cardiopulmonar. Analizando el ritmo cardíaco. Manténgase alejado del paciente. Analizando el ritmo cardíaco.'
+                'params' => 'Detenga la reanimación cardiopulmonar. Analizando el ritmo cardíaco. Manténgase alejado del paciente.'
             ],
             [
                 'scenario_id' => 5,
                 'instruction_id' => 3,
                 'order' => 2,
                 'reps' => 0,
-                'params' => 'No se recomienda dar una descarga. Inicie resucitación cardiopulmonar.'
+                'params' => 'No se recomienda dar una descarga. Inicie reanimación cardiopulmonar.'
             ]
         ];
 
@@ -256,56 +259,70 @@ class ScenarioInstructionSeeder extends Seeder
                 'instruction_id' => 1,
                 'order' => 1,
                 'reps' => 1,
-                'params' => 'Analizando el ritmo cardíaco. No toque al paciente. Se recomienda dar una descarga. Manténgase alejado del paciente. '
+                'params' => 'Analizando el ritmo cardíaco. Manténgase alejado del paciente.'
+            ],
+            [
+                'scenario_id' => 6,
+                'instruction_id' => 1,
+                'order' => 2,
+                'reps' => 1,
+                'params' => 'Se recomienda dar una descarga. Manténgase alejado del paciente.'
             ],
             [
                 'scenario_id' => 6,
                 'instruction_id' => 2,
                 'order' => 2,
                 'reps' => 1,
-                'params' => 'Pulse el botón de descarga'
+                'params' => 'Pulse el botón de descarga.'
             ],
             [
                 'scenario_id' => 6,
                 'instruction_id' => 4,
                 'order' => 3,
                 'reps' => 1,
-                'params' => 'Se dio una descarga. Inicie resucitación cardio pulmonar'
+                'params' => 'Se dio una descarga. Inicie reanimación cardiopulmonar.'
             ],
             [
                 'scenario_id' => 6,
                 'instruction_id' => 1,
                 'order' => 4,
                 'reps' => 1,
-                'params' => 'Analizando el ritmo cardíaco. No toque al paciente. Se recomienda dar una descarga. Manténgase alejado del paciente. '
+                'params' => 'Analizando el ritmo cardíaco. Manténgase alejado del paciente.'
+            ],
+            [
+                'scenario_id' => 6,
+                'instruction_id' => 1,
+                'order' => 2,
+                'reps' => 1,
+                'params' => 'Se recomienda dar una descarga. Manténgase alejado del paciente.'
             ],
             [
                 'scenario_id' => 6,
                 'instruction_id' => 2,
                 'order' => 5,
                 'reps' => 1,
-                'params' => 'Pulse el botón de descarga'
+                'params' => 'Pulse el botón de descarga.'
             ],
             [
                 'scenario_id' => 6,
                 'instruction_id' => 4,
                 'order' => 6,
                 'reps' => 1,
-                'params' => 'Se dio una descarga. Inicie resucitación cardio pulmonar'
+                'params' => 'Se dio una descarga. Inicie reanimación cardiopulmonar.'
             ],
             [
                 'scenario_id' => 6,
                 'instruction_id' => 1,
                 'order' => 7,
                 'reps' => 1,
-                'params' => 'Detenga la reanimación cardiopulmonar. Analizando el ritmo cardíaco. Manténgase alejado del paciente. Analizando el ritmo cardíaco.'
+                'params' => 'Detenga la reanimación cardiopulmonar. Analizando el ritmo cardíaco. Manténgase alejado del paciente.'
             ],
             [
                 'scenario_id' => 6,
                 'instruction_id' => 3,
                 'order' => 8,
                 'reps' => 0,
-                'params' => 'No se recomienda dar una descarga. Inicie resucitación cardiopulmonar.'
+                'params' => 'No se recomienda dar una descarga. Inicie reanimación cardiopulmonar.'
             ]
         ];
 
@@ -315,42 +332,49 @@ class ScenarioInstructionSeeder extends Seeder
                 'instruction_id' => 4,
                 'order' => 1,
                 'reps' => 0,
-                'params' => 'Inicie resucitación cardiopulmonar.'
+                'params' => 'Inicie reanimación cardiopulmonar.'
             ],
             [
                 'scenario_id' => 7,
                 'instruction_id' => 1,
                 'order' => 2,
                 'reps' => 1,
-                'params' => 'Analizando el ritmo cardíaco. No toque al paciente. Se recomienda dar una descarga. Manténgase alejado del paciente. '
+                'params' => 'Analizando el ritmo cardíaco. Manténgase alejado del paciente.'
+            ],
+            [
+                'scenario_id' => 7,
+                'instruction_id' => 1,
+                'order' => 2,
+                'reps' => 1,
+                'params' => 'Se recomienda dar una descarga. Manténgase alejado del paciente.'
             ],
             [
                 'scenario_id' => 7,
                 'instruction_id' => 2,
                 'order' => 3,
                 'reps' => 1,
-                'params' => 'Pulse el botón de descarga'
+                'params' => 'Pulse el botón de descarga.'
             ],
             [
                 'scenario_id' => 7,
                 'instruction_id' => 4,
                 'order' => 4,
                 'reps' => 1,
-                'params' => 'Se dio una descarga. Inicie resucitación cardio pulmonar'
+                'params' => 'Se dio una descarga. Inicie reanimación cardiopulmonar.'
             ],
             [
                 'scenario_id' => 7,
                 'instruction_id' => 1,
                 'order' => 5,
                 'reps' => 1,
-                'params' => 'Detenga la reanimación cardiopulmonar. Analizando el ritmo cardíaco. Manténgase alejado del paciente. Analizando el ritmo cardíaco.'
+                'params' => 'Detenga la reanimación cardiopulmonar. Analizando el ritmo cardíaco. Manténgase alejado del paciente.'
             ],
             [
                 'scenario_id' => 7,
                 'instruction_id' => 3,
                 'order' => 6,
                 'reps' => 0,
-                'params' => 'No se recomienda dar una descarga. Inicie resucitación cardiopulmonar.'
+                'params' => 'No se recomienda dar una descarga. Inicie reanimación cardiopulmonar.'
             ]
         ];
 
@@ -360,26 +384,30 @@ class ScenarioInstructionSeeder extends Seeder
                 'instruction_id' => 1,
                 'order' => 1,
                 'reps' => 1,
-                'params' => 'Analizando el ritmo cardíaco. No toque al paciente. Se recomienda dar una descarga. Manténgase alejado del paciente. '
+                'params' => 'Analizando el ritmo cardíaco. Manténgase alejado del paciente.'
+            ],
+            [
+                'scenario_id' => 8,
+                'instruction_id' => 1,
+                'order' => 2,
+                'reps' => 1,
+                'params' => 'Se recomienda dar una descarga. Manténgase alejado del paciente.'
             ],
             [
                 'scenario_id' => 8,
                 'instruction_id' => 2,
                 'order' => 2,
                 'reps' => 1,
-                'params' => 'Pulse el botón de descarga'
+                'params' => 'Pulse el botón de descarga.'
             ],
             [
                 'scenario_id' => 8,
                 'instruction_id' => 4,
                 'order' => 3,
                 'reps' => 1,
-                'params' => 'Se dio una descarga. Inicie resucitación cardio pulmonar'
+                'params' => 'Se dio una descarga. Inicie reanimación cardiopulmonar.'
             ]
         ];
-
-
-
         
         foreach ($scenario1Instructions as $scenarioInstruction) {
             ScenarioInstruction::create($scenarioInstruction);
