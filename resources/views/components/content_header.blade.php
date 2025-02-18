@@ -1,8 +1,10 @@
 <div class="d-flex align-items-center justify-content-between mb-2" style="gap: 10px;">
     <h1>@yield('title')</h1>
-    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#createModal">
-        <i class="ri-add-line mr-1"></i>Añadir Nuevo
-    </button>
+    @if (!isset($hideAddButton) || !$hideAddButton)
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#createModal">
+            <i class="ri-add-line mr-1"></i>Añadir Nuevo
+        </button>
+    @endif
 </div>
 
 <p class="w-75 text-muted mt-2">

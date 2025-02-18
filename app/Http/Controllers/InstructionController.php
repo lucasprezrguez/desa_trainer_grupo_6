@@ -22,9 +22,7 @@ class InstructionController extends Controller
     {
         $validated = $request->validate([
             'instruction_name' => 'required|string|max:255',
-            'tts_description' => 'required|string',
             'require_action' => 'required|boolean',
-            'type' => 'required|string',
             'waiting_time' => 'required|integer',
         ]);
 
@@ -43,9 +41,7 @@ class InstructionController extends Controller
     {
         $validated = $request->validate([
             'instruction_name' => 'required|string|max:255',
-            'tts_description' => 'required|string',
             'require_action' => 'required|boolean',
-            'type' => 'required|string',
             'waiting_time' => 'required|integer',
         ]);
 

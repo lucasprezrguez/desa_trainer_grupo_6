@@ -2,67 +2,143 @@
 
 @section('content')
     <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
         #aed-container {
             width: var(--w-device);
             height: var(--h-device);
+            visibility: hidden;
+            transition: visibility 50ms ease-out;
         }
+
         #countdown-timer {
             display: inline-block;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 5px;
         }
-        #progress-bar {
-            width: 80%;
-            height: 4px;
-            background-color: #5c5c5c;
-            border-radius: 25px;
+
+        .crt {
+            position: relative;
             overflow: hidden;
-            display: inline-block;
+            filter: contrast(1.5) brightness(0.9) blur(0.4px);
+            animation: flicker 0.15s infinite;
         }
-        #progress-bar-fill {
+
+        .crt:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            background-color: #ffb900;
-            width: 0;
-            transition: width 0.1s;
+            background:
+                repeating-linear-gradient(0deg,
+                    rgba(0, 0, 0, 0.2) 0px,
+                    rgba(0, 0, 0, 0.2) 1px,
+                    transparent 1px,
+                    transparent 2px),
+                repeating-linear-gradient(90deg,
+                    rgba(255, 255, 255, 0.08) 0px,
+                    rgba(255, 255, 255, 0.08) 1px,
+                    transparent 1px,
+                    transparent 2px);
+            pointer-events: none;
+            mix-blend-mode: multiply;
+            animation: scanlines 6s linear infinite;
+        }
+
+        .crt:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 50% 50%,
+                    rgba(0, 0, 0, 0.6) 0%,
+                    transparent 70%),
+                repeating-radial-gradient(circle at 50% 50%,
+                    rgba(0, 0, 0, 0.15) 0%,
+                    transparent 0.5px,
+                    transparent 4px);
+            pointer-events: none;
+            mix-blend-mode: overlay;
+        }
+
+        @keyframes scanlines {
+            0% {
+                transform: translateY(0%);
+            }
+
+            100% {
+                transform: translateY(-100%);
+            }
+        }
+
+        @keyframes flicker {
+            0% {
+                filter: contrast(1.3) brightness(0.85) blur(0.4px);
+            }
+
+            50% {
+                filter: contrast(1.4) brightness(0.8) blur(0.6px);
+            }
+
+            100% {
+                filter: contrast(1.3) brightness(0.85) blur(0.4px);
+            }
         }
     </style>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <div x-data="{
         isOn: false,
         backgroundImage: '{{ asset('images/device.png') }}',
         logCount: 0, // Contador para el número de veces que se pulsa el botón de descarga
         scenarioInstruction: {{ $scenarioInstruction }},
-        instructions: {{$instructions}},
+        instructions: {{ $instructions }},
         currentInstruction: null,
         screen: '',
         showImage: true,
         selectedScenarioId: 0,
         scenarioInstructionSelected: null,
         countdownInterval: null,
+        isBackgroundLoaded: false,
     
         selectScenario(id) {
-            
+    
             this.selectedScenarioId = id;
             this.isOn = true;
             this.backgroundImage = this.isOn ? '{{ asset('images/device_pads.png') }}' : '{{ asset('images/device.png') }}';
             this.screen = '';
             this.logCount = 0;
-
+    
             confirm('¿Estás seguro de que quieres empezar la simulación?');
-
+    
             this.scenarioInstructionSelected = this.scenarioInstruction.filter(
                 scenario => scenario.scenario_id == this.selectedScenarioId
             );
-
+    
             console.log('🔎 Filtradas Instrucciones:', this.scenarioInstructionSelected);
-
+    
             if (!this.scenarioInstructionSelected.length) {
                 console.error('⚠️ No se encontraron instrucciones para este escenario.');
                 return;
             }
-
+    
             this.$refs.closeButton.click();
             console.log('✅ Selected scenario id: ', this.selectedScenarioId);
-
-            this.logShockButtonPress();
+    
+            // Announce the scenario before starting instructions
+            const scenarioAnnouncement = new SpeechSynthesisUtterance(`El Escenario ${this.selectedScenarioId} va a comenzar.`);
+            scenarioAnnouncement.onend = () => {
+                this.logShockButtonPress();
+            };
+            speechSynthesis.speak(scenarioAnnouncement);
         },
         togglePower() {
             this.isOn = !this.isOn;
@@ -72,7 +148,7 @@
             if (this.isOn) {
                 this.startLogging(); // Iniciar la función cuando el dispositivo se enciende
             } else {
-                {{-- this.logCount = 0; // Reiniciar el contador cuando el dispositivo se apaga --}}
+                this.logCount = 0; // Reiniciar el contador cuando el dispositivo se apaga --}}
             }
         },
         logShockButtonPress() {
@@ -80,7 +156,7 @@
                 console.error('❌ No hay instrucciones seleccionadas.');
                 return;
             }
-
+    
             if (this.logCount >= this.scenarioInstructionSelected.length) {
                 console.log('✅ Todas las instrucciones han sido ejecutadas.');
                 this.logCount = 0;
@@ -88,31 +164,31 @@
                 this.togglePower();
                 return;
             }
-
+    
             console.log('CONTADOR: ', this.logCount);
             console.log('🔎 Instrucción actual:', this.scenarioInstructionSelected[this.logCount]);
-
+    
             const currentScenarioInstruction = this.scenarioInstructionSelected[this.logCount];
-
+    
             if (!currentScenarioInstruction) {
                 console.error(`⚠️ No hay instrucción en la posición ${this.logCount}`);
                 return;
             }
-
+    
             this.currentInstruction = this.instructions.find(
                 instruction => parseInt(instruction.instruction_id) === parseInt(currentScenarioInstruction.instruction_id)
             );
-
+    
             if (!this.currentInstruction) {
                 console.error(`⚠️ No se encontró la instrucción con ID ${currentScenarioInstruction.instruction_id}`);
                 return;
             }
-
+    
             console.log(`Instrucción actual: `, this.currentInstruction);
-
+    
             const utterance = new SpeechSynthesisUtterance(currentScenarioInstruction.params);
             speechSynthesis.cancel();
-
+    
             if (this.currentInstruction.require_action) {
                 this.showImage = false;
                 this.screen = currentScenarioInstruction.params;
@@ -123,7 +199,6 @@
                 this.showImage = false;
                 this.screen = currentScenarioInstruction.params;
                 speechSynthesis.speak(utterance);
-                this.startProgressBar(this.currentInstruction.waiting_time);
                 this.startCountdown(this.currentInstruction.waiting_time);
                 setTimeout(() => {
                     clearInterval(this.countdownInterval);
@@ -131,10 +206,6 @@
                     this.logShockButtonPress();
                 }, this.currentInstruction.waiting_time * 1000);
             }
-        },
-        startProgressBar(waitingTime) {
-            $('#progress-bar-fill').css('width', '0');
-            $('#progress-bar-fill').animate({ width: '100%' }, waitingTime * 1000);
         },
         startCountdown(waitingTime) {
             let remainingTime = waitingTime;
@@ -155,25 +226,41 @@
         updateBackgroundSize() {
             this.$nextTick(() => {
                 const backgroundImage = document.getElementById('background-image');
-                if (!backgroundImage) return;
+                if (!backgroundImage || backgroundImage.clientWidth === 0) return;
     
-                const { clientWidth: width, clientHeight: height } = backgroundImage;
+                const container = this.$refs.aedContainer;
+                if (container) container.style.visibility = 'visible';
+    
+                const width = backgroundImage.clientWidth;
+                const height = backgroundImage.clientHeight * 0.87;
+    
                 document.documentElement.style.setProperty('--w-device', `${width}px`);
-                document.documentElement.style.setProperty('--h-device', `${height * 0.87}px`);
+                document.documentElement.style.setProperty('--h-device', `${height}px`);
+    
+                setTimeout(() => {
+                    this.isBackgroundLoaded = true;
+                }, 2000);
             });
         }
     
-    }" x-init="updateBackgroundSize();
-    document.addEventListener('DOMContentLoaded', updateBackgroundSize);
-    speechSynthesis.cancel();
-    " @resize.window="updateBackgroundSize()"
+    }" x-cloak x-init="const bgImage = document.getElementById('background-image');
+    if (bgImage.complete) updateBackgroundSize();
+    speechSynthesis.cancel();" @resize.window="updateBackgroundSize()"
         class="w-screen h-screen flex justify-center items-center bg-neutral-800 relative">
+        <!-- Spinner -->
+        <div x-show="!isBackgroundLoaded" class="fixed inset-0 z-50 flex items-center justify-center bg-neutral-800">
+            <div role="status">
+                <i class="ri-pulse-line text-5xl text-white animate-pulse"></i>
+                <span class="sr-only">Cargando...</span>
+            </div>
+        </div>
         <!-- Imagen de fondo -->
         <img id="background-image" :src="backgroundImage" alt="Dispositivo LAERDAL DEA de entrenamiento 3"
-            class="absolute inset-0 mx-auto h-full object-contain drop-shadow-2xl">
+            class="absolute inset-0 mx-auto h-full object-contain drop-shadow-2xl" @load="updateBackgroundSize">
         <!-- Contenedor del DESA Trainer -->
-        <div class="rounded-lg shadow-3xl w-full h-full flex flex-col justify-between items-center relative"
-            style="width: var(--w-device); height: var(--h-device);">
+        <div x-ref="aedContainer" id="aed-container"
+            class="rounded-lg shadow-3xl w-full h-full flex flex-col justify-between items-center relative"
+            style="width: var(--w-device); height: var(--h-device); visibility: hidden;">
             <!-- Contenedor del LED y el botón de encendido/apagado -->
             <div class="flex flex-col items-center justify-between gap-4">
                 <!-- LED indicador -->
@@ -188,33 +275,30 @@
             </div>
             <!-- Pantalla con marco negro -->
             <div
-                class="bg-neutral-700 w-[72%] aspect-square border-2 border-neutral-400 rounded-3xl inset-shadow-sm flex flex-col items-center justify-between p-4 relative">
+                class="bg-neutral-700 w-[72%] aspect-square border-2 border-neutral-400 rounded-3xl inset-shadow-sm flex flex-col items-center relative">
                 <!-- Contenedor Flexbox -->
-                <div class="flex flex-col items-center justify-around w-full h-full">
+                <div class="flex flex-col items-center justify-evenly w-full h-full">
                     <!-- Botón superior en el marco negro -->
-                    <p class="text-center font-bold text-xl text-neutral-400 uppercase border-2 border-black rounded-md py-1 px-4">
-                        SOLO ENTRENAMIENTO
-                    </p>
+                    <button id="drawer-button" @click="drawerOpen = true" href=""
+                        class="text-center font-bold text-xl text-neutral-400 uppercase border-2 border-black rounded-md py-1 px-4"
+                        type="button" data-drawer-target="drawer-scenarios" data-drawer-show="drawer-scenarios"
+                        aria-controls="drawer-scenarios">
+                        ELEGIR ENTRENAMIENTO
+                    </button>
                     <!-- Contenido de la pantalla (Texto dinámico) -->
-                    <div
-                        class="w-[80%] aspect-[1.21] flex items-center justify-center bg-black text-white text-2xl font-bold rounded-3xl">
-                        <img x-show="showImage" src="{{ asset('images/screen.png') }}" alt="Screen Content"
-                            class="object-contain rounded-3xl max-w-full max-h-full">
-                        <span x-text="screen" class="screen-text text-sm"></span>
-                    </div>
-                    <!-- Barra de progreso y contador -->
-                    <div class="flex items-center justify-center w-[80%]">
-                        <button id="drawer-button" @click="drawerOpen = true" href="" class="animate-pulse underline text-amber-400" x-show="!selectedScenarioId" type="button" data-drawer-target="drawer-scenarios" data-drawer-show="drawer-scenarios"
-                        aria-controls="drawer-scenarios">Elegir escenario</button>
-                        <div id="progress-bar" x-show="selectedScenarioId">
-                            <div id="progress-bar-fill"></div>
+                    <div class="w-[80%] rounded-lg p-2 bg-black text-white flex flex-col justify-center relative">
+                        <div
+                            class="w-full aspect-[1.21] flex items-center justify-center bg-white text-black text-2xl font-bold crt" style="box-shadow: inset 0px 0px 3px 2px rgba(0,0,0,1);">
+                            <img x-show="showImage" src="{{ asset('images/screen.png') }}" alt="Screen Content"
+                                class="object-contain max-w-full max-h-full">
+                            <div x-text="screen" class="text-center text-xl noto-sans-display"></div>
+                            <div id="countdown-timer" class="font-mono text-xs"></div>
                         </div>
-                        <div id="countdown-timer" class="font-mono text-xs text-neutral-50 ms-1" x-show="selectedScenarioId"></div>
                     </div>
-                    <!-- Logo en el marco negro -->
-                    {{-- <div class="flex flex-col items-center text-center text-sm font-light text-white">
-                        <img src="{{ asset('images/laerdal.png') }}" alt="Laerdal Logo" class="w-[30%] object-contain">
-                    </div> --}}
+                    <div class="flex items-center justify-center w-[80%]">
+                        <img src="{{ asset('images/laerdal.png') }}" alt="IES El Rincón Logo"
+                            class="w-[30%] object-contain">
+                    </div>
                 </div>
             </div>
             <!-- Botón de descarga -->

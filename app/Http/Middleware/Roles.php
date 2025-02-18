@@ -29,7 +29,7 @@ class Roles
 
         if (($user->roles === 'admin') ||
             ($user->roles === 'alumno' && $ruta_actual === 'trainer.aed') ||
-            ($user->roles === 'profesor' && $ruta_actual === 'dashboard')) {
+            ($user->roles === 'profesor' && $ruta_actual != 'users.index')) {
             return $next($request); 
         }
 
@@ -39,7 +39,7 @@ class Roles
             case 'alumno':
                 return redirect()->route('trainer.aed');
             case 'profesor':
-                return redirect()->route('dashboard');
+                return redirect()->route('trainer.aed');
             default:
                 abort(404);
         }

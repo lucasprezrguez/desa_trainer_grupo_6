@@ -3,7 +3,8 @@
 @section('title', 'Instrucciones')
 
 @section('content_header')
-    <x-content-header />
+    @component('components.content_header', ['hideAddButton' => true])
+    @endcomponent
 @stop
 
 @section('content')
@@ -34,10 +35,10 @@
         </tbody>
     </table>
 
-    <x-modal id="createModal" title="Añadir Instrucción" formId="create-form" action="{{ route('instructions.store') }}"
+    <!-- <x-modal id="createModal" title="Añadir Instrucción" formId="create-form" action="{{ route('instructions.store') }}"
         submitText="Añadir" deleteText="Cancelar">
         @include('admin.instructions.create')
-    </x-modal>
+    </x-modal> -->
 
     @foreach ($instructions as $instruction)
         <x-modal id="editModal-{{ $instruction->instruction_id }}" title="Editar Instrucción" formId="edit-form-{{ $instruction->instruction_id }}"

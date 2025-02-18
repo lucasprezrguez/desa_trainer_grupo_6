@@ -6,7 +6,7 @@
 </div>
 <div class="form-group">
     <label for="require_action">Requiere Acción</label>
-    <select name="require_action" class="form-control" required>
+    <select name="require_action" class="form-control custom-select" required>
         <option value="1" {{ $instruction->require_action ? 'selected' : '' }}>Sí</option>
         <option value="0" {{ !$instruction->require_action ? 'selected' : '' }}>No</option>
     </select>
