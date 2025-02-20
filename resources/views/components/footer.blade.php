@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between align-items-center my-3 w-100 px-3">
     <div class="footer__links d-flex gap-3">
-        <a href="/trainer/aed" class="text-muted">Dispositivo</a>
+        <a href="/trainer" class="text-muted">Dispositivo</a>
         <a href="{{ route('logout') }}" class="text-muted" style="cursor: pointer;" 
            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
             Finalizar sesión

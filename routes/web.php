@@ -72,23 +72,8 @@ Route::middleware([
     // Rutas de vistas del entrenador
     Route::get('trainer', function(){
         $scenarios = Scenario::all();
-        $scenarioInstruction = ScenarioInstruction::all();
-        return view('/trainer/index', compact('scenarios', 'scenarioInstruction'));
-    });
-
-    Route::get('/modal-electrodos', function () {
-        return view('trainer.modal-electrodos');
-    })->name('ruta.modal.electrodos');
-
-    Route::get('trainer/aed', function(){
-        $scenarios = Scenario::all();
         $instructions = Instruction::all();
         $scenarioInstruction = ScenarioInstruction::all();
         return view('/trainer/aed', compact('scenarios', 'scenarioInstruction', 'instructions'));
     })->name('trainer.aed');
-
-    // Ruta de prueba
-    Route::get('/electrodo', function () {
-        return view('trainer.electrodo'); 
-    });
 });

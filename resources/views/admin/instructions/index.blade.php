@@ -11,6 +11,7 @@
     <table class="table table-hover results">
         <thead>
             <tr>
+                <th>#</th>
                 <th>Instrucción</th>
                 <th class="text-center">Requiere Acción</th>
                 <th class="text-center">Espera (s)</th>
@@ -23,6 +24,7 @@
         <tbody>
             @foreach ($instructions as $instruction)
                 <tr data-toggle="modal" data-target="#editModal-{{ $instruction->instruction_id }}" style="cursor: pointer;">
+                    <td>{{ $instruction->instruction_id }}</td>
                     <td>{{ $instruction->instruction_name }}</td>
                     <td class="text-center">{{ $instruction->require_action ? 'Sí' : 'No' }}</td>
                     <td class="text-center">{{ $instruction->waiting_time }}</td>
