@@ -107,6 +107,7 @@
     </style>
     <div x-data="{
         isOn: false,
+        metronomeBpm: {{ session('metronome_bpm', 110) }},
         backgroundImage: '{{ asset('images/device.png') }}',
         logCount: 0, // Contador para el número de veces que se pulsa el botón de descarga
         scenarioInstruction: {{ $scenarioInstruction }},
@@ -318,10 +319,9 @@
             });
         },
         playMetronome() {
-            if (this.metronomeInterval) {
-                clearInterval(this.metronomeInterval);
-            }
-            const audioContext = new(window.AudioContext || window.webkitAudioContext)();
+            if (this.metronomeInterval) clearInterval(this.metronomeInterval);
+            
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const metronomeSound = () => {
                 const oscillator = audioContext.createOscillator();
                 const gainNode = audioContext.createGain();
@@ -333,7 +333,12 @@
                 oscillator.start(audioContext.currentTime);
                 oscillator.stop(audioContext.currentTime + 0.1);
             };
-            this.metronomeInterval = setInterval(metronomeSound, 60000 / 110); // 110 BPM
+            
+            // Usa el BPM de la sesión
+            this.metronomeInterval = setInterval(
+                metronomeSound, 
+                60000 / this.metronomeBpm // ¡Aquí aplicamos el BPM!
+            );
         },
         stopMetronome() {
             if (this.metronomeInterval) {
@@ -479,7 +484,7 @@
                         data-accordion-target="#accordion-flush-body-2" aria-expanded="false"
                         aria-controls="accordion-flush-body-2">
                         <span class="text-xs uppercase font-semibold text-gray-500 line-clamp-1"><i
-                                class="ri-sd-card-line text-sm font-normal me-2"></i></i>ESCENARIOS PERSONALIZADOS</span>
+                                class="ri-sd-card-line text-sm font-normal me-2"></i></i>PERSONALIZADOS</span>
                         <i data-accordion-icon
                             class="ri-arrow-up-s-line text-gray-400 bg-transparent w-8 h-8 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-lg flex items-center justify-center"></i>
                     </button>
@@ -511,8 +516,11 @@
             <label class="inline-flex items-center justify-between gap-3 my-2 cursor-pointer w-full">
                 <div class="flex-1">
                     <h2 class="text-sm font-semibold text-gray-500">Metrónomo</h2>
-                    <p class="text-xs text-gray-500">El metrónomo está configurado para realizar 110 compresiones por
-                        minuto.</p>
+                    <p class="text-xs text-gray-500">
+                        El metrónomo está configurado para realizar 
+                        <span class="font-bold">{{ session('metronome_bpm', 110) }}</span> 
+                        compresiones por minuto.
+                    </p>
                 </div>
                 <input type="checkbox" x-model="isMetronomeEnabled" class="sr-only peer" checked>
                 <div

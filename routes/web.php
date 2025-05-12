@@ -5,71 +5,71 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DESAController;
 use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\ScenarioController;
+use App\Http\Controllers\AdminController; // <- Añadir esta línea
 use App\Models\Scenario;
 use App\Http\Middleware\Roles;
 use App\Models\Instruction;
 use App\Models\ScenarioInstruction;
 
-// Redirigir a la página de inicio de sesión
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// Grupo de middleware para usuarios autenticados y verificados
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('panel', function () {
-        return view('admin.dashboard');
-    })->name('dashboard')->middleware(Roles::class);
+    // Ruta modificada para usar el AdminController
+    Route::get('panel', [AdminController::class, 'dashboard'])
+        ->name('dashboard')
+        ->middleware(Roles::class);
 
-    // Rutas de usuarios con middleware de autenticación
     Route::middleware(Roles::class)->prefix('panel')->group(function () {
-
-        // Rutas de usuarios con middleware de autenticación
         Route::resource('usuarios', UserController::class)
-            ->parameters(['usuarios' => 'user']) // Mapea el parámetro 'usuarios' a 'user' en el controlador
+            ->parameters(['usuarios' => 'user'])
             ->names([
-                'index'   => 'users.index',       // Listar todos los usuarios registrados en el sistema
-                'create'  => 'users.create',      // Mostrar el formulario para crear un nuevo usuario
-                'store'   => 'users.store',       // Guardar un nuevo usuario en la base de datos
-                'show'    => 'users.show',        // Mostrar los detalles de un usuario específico
-                'edit'    => 'users.edit',        // Mostrar el formulario para editar un usuario existente
-                'update'  => 'users.update',      // Actualizar los datos de un usuario existente
-                'destroy' => 'users.destroy',     // Eliminar un usuario del sistema
+                'index'   => 'users.index',
+                'create'  => 'users.create',
+                'store'   => 'users.store',
+                'show'    => 'users.show',
+                'edit'    => 'users.edit',
+                'update'  => 'users.update',
+                'destroy' => 'users.destroy',
             ]);
-        Route::post('/users/{user}/generate-password', [UserController::class, 'generatePassword'])->name('users.generatePassword'); // Generar una nueva contraseña para un usuario específico
+            
+        Route::post('/users/{user}/generate-password', [UserController::class, 'generatePassword'])
+            ->name('users.generatePassword');
 
-        // Rutas de escenarios con middleware de autenticación
         Route::resource('escenarios', ScenarioController::class)
-            ->parameters(['escenarios' => 'scenario']) // Mapea el parámetro 'escenarios' a 'scenario' en el controlador
+            ->parameters(['escenarios' => 'scenario'])
             ->names([
-                'index' => 'scenarios.index',      // Listar todos los escenarios disponibles
-                'create' => 'scenarios.create',    // Mostrar el formulario para crear un nuevo escenario
-                'store' => 'scenarios.store',      // Guardar un nuevo escenario en la base de datos
-                'show' => 'scenarios.show',        // Mostrar los detalles de un escenario específico
-                'edit' => 'scenarios.edit',        // Mostrar el formulario para editar un escenario existente
-                'update' => 'scenarios.update',    // Actualizar los datos de un escenario existente
-                'destroy' => 'scenarios.destroy',  // Eliminar un escenario del sistema
+                'index' => 'scenarios.index',
+                'create' => 'scenarios.create',
+                'store' => 'scenarios.store',
+                'show' => 'scenarios.show',
+                'edit' => 'scenarios.edit',
+                'update' => 'scenarios.update',
+                'destroy' => 'scenarios.destroy',
             ]);
 
-        // Rutas de instrucciones con middleware de autenticación
         Route::resource('instrucciones', InstructionController::class)
-            ->parameters(['instrucciones' => 'instructions']) // Mapea el parámetro 'instrucciones' a 'instructions' en el controlador
+            ->parameters(['instrucciones' => 'instructions'])
             ->names([
-                'index' => 'instructions.index',      // Listar todas las instrucciones disponibles
-                'create' => 'instructions.create',    // Mostrar el formulario para crear una nueva instrucción
-                'store' => 'instructions.store',      // Guardar una nueva instrucción en la base de datos
-                'show' => 'instructions.show',        // Mostrar los detalles de una instrucción específica
-                'edit' => 'instructions.edit',        // Mostrar el formulario para editar una instrucción existente
-                'update' => 'instructions.update',    // Actualizar los datos de una instrucción existente
-                'destroy' => 'instructions.destroy',  // Eliminar una instrucción del sistema
+                'index' => 'instructions.index',
+                'create' => 'instructions.create',
+                'store' => 'instructions.store',
+                'show' => 'instructions.show',
+                'edit' => 'instructions.edit',
+                'update' => 'instructions.update',
+                'destroy' => 'instructions.destroy',
             ]);
+        
+        // Nueva rota para actualizar BPM
+        Route::post('update-bpm', [AdminController::class, 'updateBpm'])
+            ->name('update.bpm');
     });
 
-    // Rutas de vistas del entrenador
     Route::get('trainer', function(){
         $scenarios = Scenario::all();
         $instructions = Instruction::all();
