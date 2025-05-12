@@ -13,13 +13,14 @@ class Scenario extends Model
 
     protected $fillable = [
         'scenario_name',
-        'image_url'
+        'image_url',
+        'is_enabled',
     ];
 
     public function instructions()
-{
-    return $this->belongsToMany(Instruction::class, 'scenario_instruction', 'scenario_id', 'instruction_id')
-                ->withPivot('order', 'reps', 'params')
-                ->withTimestamps();
-}
+    {
+        return $this->belongsToMany(Instruction::class, 'scenario_instruction', 'scenario_id', 'instruction_id')
+                    ->withPivot('order', 'reps', 'params')
+                    ->withTimestamps();
+    }
 }

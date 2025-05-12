@@ -70,8 +70,10 @@ Route::middleware([
             ->name('update.bpm');
     });
 
+    Route::post('/admin/toggle-scenarios', [AdminController::class, 'toggleScenarios'])->name('toggle.scenarios');
+
     Route::get('trainer', function(){
-        $scenarios = Scenario::all();
+        $scenarios = Scenario::where('is_enabled', true)->get(); // Filtrar solo los habilitados
         $instructions = Instruction::all();
         $scenarioInstruction = ScenarioInstruction::all();
         return view('/trainer/aed', compact('scenarios', 'scenarioInstruction', 'instructions'));

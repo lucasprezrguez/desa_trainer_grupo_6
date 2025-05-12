@@ -8,26 +8,40 @@
 
 @section('content')
     <div>
-            <form action="{{ route('update.bpm') }}" method="POST" id="bpm-form">
-                @csrf
-                <input type="hidden" name="bpm" id="selected-bpm" value="{{ session('metronome_bpm', 110) }}">
-                
-                <div class="form-group">
-                    <label class="mb-3">CPM del Metrónomo:</label>
-                    <div class="btn-group w-100" role="group">
-                        @foreach([100, 110, 120] as $bpm)
-                            <button 
-                                type="button"
-                                class="btn btn-outline-primary {{ session('metronome_bpm', 110) == $bpm ? 'active' : '' }}"
-                                data-bpm="{{ $bpm }}"
-                                onclick="document.getElementById('selected-bpm').value = this.dataset.bpm; document.getElementById('bpm-form').submit()"
-                            >
-                                {{ $bpm }}
-                            </button>
-                        @endforeach
-                    </div>
+        <form action="{{ route('update.bpm') }}" method="POST" id="bpm-form">
+            @csrf
+            <input type="hidden" name="bpm" id="selected-bpm" value="{{ session('metronome_bpm', 110) }}">
+            <h3>BPM del Metrónomo</h3>
+            <div class="form-group">
+                <div class="btn-group w-100" role="group">
+                    @foreach([100, 110, 120] as $bpm)
+                        <button 
+                            type="button"
+                            class="btn btn-outline-primary {{ session('metronome_bpm', 110) == $bpm ? 'active' : '' }}"
+                            data-bpm="{{ $bpm }}"
+                            onclick="document.getElementById('selected-bpm').value = this.dataset.bpm; document.getElementById('bpm-form').submit()"
+                        >
+                            {{ $bpm }}
+                        </button>
+                    @endforeach
                 </div>
-            </form>
+            </div>
+        </form>
+    </div>
+
+    <div class="mt-4">
+        <h3>Habilitar/Deshabilitar Escenarios</h3>
+        <div class="d-flex flex-wrap gap-2">
+            @foreach(range(1, 8) as $scenarioId)
+                <button 
+                    type="button" 
+                    class="btn scenario-btn {{ $scenarios->contains('scenario_id', $scenarioId) && $scenarios->firstWhere('scenario_id', $scenarioId)->is_enabled ? 'btn-primary' : 'btn-outline-primary' }}"
+                    onclick="toggleScenario({{ $scenarioId }})"
+                >
+                    {{ $scenarioId }}
+                </button>
+            @endforeach
+        </div>
     </div>
 
     @if(session('success'))
@@ -35,6 +49,47 @@
             {{ session('success') }}
         </div>
     @endif
+@endsection
+
+@section('js')
+    <script>
+        function toggleScenario(scenarioId) {
+            const button = document.querySelector(`.scenario-btn:nth-child(${scenarioId})`);
+            const isEnabled = button.classList.contains('btn-primary');
+
+            // Cambiar visualmente el estado del botón
+            button.classList.toggle('btn-primary', !isEnabled);
+            button.classList.toggle('btn-outline-primary', isEnabled);
+
+            // Enviar la actualización al servidor usando AJAX
+            fetch('{{ route('toggle.scenarios') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    scenario_id: scenarioId,
+                    is_enabled: !isEnabled
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al guardar los cambios');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Estado actualizado:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Revertir el cambio visual si hay un error
+                button.classList.toggle('btn-primary', isEnabled);
+                button.classList.toggle('btn-outline-primary', !isEnabled);
+            });
+        }
+    </script>
 @endsection
 
 <style>
@@ -45,5 +100,15 @@
         background-color: #0d6efd;
         color: white;
         border-color: #0d6efd;
+    }
+    .scenario-btn {
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: bold;
     }
 </style>

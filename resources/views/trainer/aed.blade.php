@@ -518,7 +518,7 @@
                     <h2 class="text-sm font-semibold text-gray-500">Metrónomo</h2>
                     <p class="text-xs text-gray-500">
                         El metrónomo está configurado para realizar 
-                        <span class="font-bold">{{ session('metronome_bpm', 110) }}</span> 
+                        <span class="underline decoration-dotted">{{ session('metronome_bpm', 110) }}</span> 
                         compresiones por minuto.
                     </p>
                 </div>
