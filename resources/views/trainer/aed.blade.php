@@ -32,6 +32,15 @@
             vertical-align: baseline;
         }
 
+        #instruction-counter {
+            display: none;
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
         .crt {
             position: relative;
             overflow: hidden;
@@ -121,6 +130,8 @@
         isBackgroundLoaded: false,
         isMetronomeEnabled: true,
         easterEggClickCount: 0,
+        isPaused: false, // Estado de pausa del escenario
+        remainingTime: null, // Tiempo restante para reanudar el temporizador
         easterEggClick() {
             this.easterEggClickCount++;
             if (this.easterEggClickCount >= 7) {
@@ -136,6 +147,7 @@
             this.screen = '';
             this.logCount = 0;
             $('#countdown-timer').hide();
+            $('#instruction-counter').hide(); // Ocultar el contador
     
     
             // 🔴 Limpia cualquier temporizador anterior antes de comenzar
@@ -175,7 +187,8 @@
             this.screen = '';
     
             // Ocultar el contador al apagar el dispositivo
-            $('#countdown-timer').hide(); // Ocultar el contador
+            $('#countdown-timer').hide();
+            $('#instruction-counter').hide(); // Ocultar el contador
     
             if (!this.isOn) {
                 // 🔴 Apagado: Cancelar todo lo relacionado con el escenario
@@ -250,6 +263,7 @@
                 this.showImage = false;
                 this.screen = currentScenarioInstruction.params;
                 $('#countdown-timer').hide();
+                $('#instruction-counter').hide();
                 speechSynthesis.speak(utterance);
                 this.logCount += 1;
             } else {
@@ -260,6 +274,7 @@
     
                 // Mostrar el contador cuando se empieza la cuenta regresiva
                 $('#countdown-timer').show();
+                $('#instruction-counter').show();
     
                 this.startCountdown(this.currentInstruction.waiting_time);
     
@@ -279,17 +294,54 @@
                 }
             }
         },
+        previousInstruction() {
+            if (this.logCount > 0) {
+                this.logCount -= 1;
+                this.logShockButtonPress();
+            } else {
+                console.warn('No hay instrucciones anteriores.');
+            }
+        },
+        togglePause() {
+            this.isPaused = !this.isPaused;
+            if (this.isPaused) {
+                clearTimeout(this.timeoutId);
+                clearInterval(this.countdownInterval);
+                console.log('Escenario pausado.');
+            } else {
+                console.log('Escenario reanudado.');
+                if (this.currentInstruction && !this.currentInstruction.require_action) {
+                    // Reanudar el temporizador desde el tiempo restante
+                    this.startCountdown(this.remainingTime);
+                    this.timeoutId = setTimeout(() => {
+                        clearInterval(this.countdownInterval);
+                        this.logCount += 1;
+                        this.logShockButtonPress();
+                    }, this.remainingTime * 1000);
+                } else {
+                    this.logShockButtonPress();
+                }
+            }
+        },
+        nextInstruction() {
+            if (this.logCount < (this.scenarioInstructionSelected?.length || 0) - 1) {
+                this.logCount += 1;
+                this.logShockButtonPress();
+            } else {
+                console.warn('No hay más instrucciones.');
+            }
+        },
         startCountdown(waitingTime) {
-            let remainingTime = waitingTime;
-    
+            this.remainingTime = waitingTime; // Guardar el tiempo restante
+
             // Aseguramos que el temporizador anterior se limpie
             clearInterval(this.countdownInterval);
-    
-            $('#countdown-timer').text(this.formatTime(remainingTime));
+
+            $('#countdown-timer').text(this.formatTime(this.remainingTime));
             this.countdownInterval = setInterval(() => {
-                remainingTime -= 1;
-                $('#countdown-timer').text(this.formatTime(remainingTime));
-                if (remainingTime <= 0) {
+                this.remainingTime -= 1;
+                $('#countdown-timer').text(this.formatTime(this.remainingTime));
+                if (this.remainingTime <= 0) {
                     clearInterval(this.countdownInterval);
                 }
             }, 1000);
@@ -415,10 +467,31 @@
                             <div x-text="screen" class="text-base md:text-xl noto-sans-display"
                                 :class="{ 'text-red-500': currentInstruction?.require_action, 'p-2': screen !== '' }"></div>
                             <div id="countdown-timer" class="font-mono text-xs"></div>
+                            <div id="instruction-counter" class="font-mono text-xs" x-text="`${logCount + 1}/${scenarioInstructionSelected?.length || 0}`"></div>
                         </div>
                     </div>
+                    <!-- Logo y controles multimedia -->
                     <div class="flex items-center justify-center w-[80%]">
-                        <img src="{{ asset('images/laerdal.png') }}" alt="Laerdal Logo" class="w-[30%] object-contain cursor-pointer" @click="easterEggClick">
+                        <!-- Logo de Laerdal -->
+                        <img x-show="!isOn || !scenarioInstructionSelected" src="{{ asset('images/laerdal.png') }}" alt="Laerdal Logo" class="w-[30%] object-contain cursor-pointer" @click="easterEggClick">
+
+                        <!-- Controles multimedia -->
+                        <div x-show="isOn && scenarioInstructionSelected" class="flex items-center justify-center w-full gap-2">
+                            <!-- Botón de retroceder -->
+                            <button @click="previousInstruction" :disabled="logCount === 0" class="w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center text-white font-bold cursor-pointer transform active:scale-90"
+                                :class="{ 'opacity-50 cursor-not-allowed': logCount === 0 }">
+                                <i class="ri-skip-back-mini-fill text-2xl md:text-4xl"></i>
+                            </button>
+                            <!-- Botón de pausa/reanudar -->
+                            <button @click="togglePause" class="bg-white w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center text-black font-bold cursor-pointer border-2 border-gray-700 transform active:scale-90">
+                                <i :class="isPaused ? 'ri-play-fill' : 'ri-pause-fill'" class="text-2xl md:text-4xl"></i>
+                            </button>
+                            <!-- Botón de avanzar -->
+                            <button @click="nextInstruction" :disabled="logCount >= (scenarioInstructionSelected?.length || 0) - 1" class="w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center text-white font-bold cursor-pointer  transform active:scale-90"
+                                :class="{ 'opacity-50 cursor-not-allowed': logCount >= (scenarioInstructionSelected?.length || 0) - 1 }">
+                                <i class="ri-skip-forward-mini-fill text-2xl md:text-4xl"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

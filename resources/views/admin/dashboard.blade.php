@@ -8,9 +8,10 @@
 
 @section('content')
         <div>
-            <h3>BPM del Metrónomo</h3>
+            <h5 class="font-weight-bold">BPM del Metrónomo</h5>
+            <p class="w-75 text-muted mt-2">Selecciona la velocidad del metrónomo en compresiones por minuto (BPM). Esto se usa en las instrucciones de RCP para marcar el ritmo adecuado durante las compresiones torácicas.</p>
             <div class="form-group">
-                <div class="btn-group w-100" role="group">
+                <div class="btn-group btn-group-lg" role="group">
                     @foreach([100, 110, 120] as $bpm)
                         <button 
                             type="button"
@@ -26,8 +27,9 @@
         </div>
 
         <div class="mt-4">
-            <h3>Habilitar/Deshabilitar Escenarios</h3>
-            <div class="d-flex flex-wrap gap-2">
+            <h5 class="font-weight-bold">Habilitar/Deshabilitar Escenarios</h5>
+            <p class="w-75 text-muted mt-2">Activa o desactiva escenarios para incluirlos o excluirlos de las actividades. Los habilitados estarán disponibles en la cajonera del trainer.</p>
+            <div class="d-flex flex-wrap" style="gap: .5rem;">
                 @foreach(range(1, 8) as $scenarioId)
                     <button 
                         type="button" 
@@ -118,24 +120,3 @@
         }
     </script>
 @endsection
-
-<style>
-    .btn-group .btn {
-        flex: 1 1 auto;
-    }
-    .btn.active {
-        background-color: #0d6efd;
-        color: white;
-        border-color: #0d6efd;
-    }
-    .scenario-btn {
-        width: 50px;
-        height: 50px;
-        margin: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        font-weight: bold;
-    }
-</style>
