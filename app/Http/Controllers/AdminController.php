@@ -20,8 +20,8 @@ class AdminController extends Controller
         ]);
 
         session(['metronome_bpm' => $request->bpm]);
-        
-        return back()->with('success', 'Metrónomo actualizado correctamente');
+
+        return response()->json(['success' => true, 'bpm' => $request->bpm]);
     }
 
     public function toggleScenarios(Request $request)

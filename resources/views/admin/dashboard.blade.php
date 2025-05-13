@@ -7,10 +7,7 @@
 @endsection
 
 @section('content')
-    <div>
-        <form action="{{ route('update.bpm') }}" method="POST" id="bpm-form">
-            @csrf
-            <input type="hidden" name="bpm" id="selected-bpm" value="{{ session('metronome_bpm', 110) }}">
+        <div>
             <h3>BPM del Metrónomo</h3>
             <div class="form-group">
                 <div class="btn-group w-100" role="group">
@@ -19,30 +16,29 @@
                             type="button"
                             class="btn btn-outline-primary {{ session('metronome_bpm', 110) == $bpm ? 'active' : '' }}"
                             data-bpm="{{ $bpm }}"
-                            onclick="document.getElementById('selected-bpm').value = this.dataset.bpm; document.getElementById('bpm-form').submit()"
+                            onclick="updateBpm({{ $bpm }})"
                         >
                             {{ $bpm }}
                         </button>
                     @endforeach
                 </div>
             </div>
-        </form>
-    </div>
-
-    <div class="mt-4">
-        <h3>Habilitar/Deshabilitar Escenarios</h3>
-        <div class="d-flex flex-wrap gap-2">
-            @foreach(range(1, 8) as $scenarioId)
-                <button 
-                    type="button" 
-                    class="btn scenario-btn {{ $scenarios->contains('scenario_id', $scenarioId) && $scenarios->firstWhere('scenario_id', $scenarioId)->is_enabled ? 'btn-primary' : 'btn-outline-primary' }}"
-                    onclick="toggleScenario({{ $scenarioId }})"
-                >
-                    {{ $scenarioId }}
-                </button>
-            @endforeach
         </div>
-    </div>
+
+        <div class="mt-4">
+            <h3>Habilitar/Deshabilitar Escenarios</h3>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach(range(1, 8) as $scenarioId)
+                    <button 
+                        type="button" 
+                        class="btn scenario-btn {{ $scenarios->contains('scenario_id', $scenarioId) && $scenarios->firstWhere('scenario_id', $scenarioId)->is_enabled ? 'btn-primary' : 'btn-outline-primary' }}"
+                        onclick="toggleScenario({{ $scenarioId }})"
+                    >
+                        {{ $scenarioId }}
+                    </button>
+                @endforeach
+            </div>
+        </div>
 
     @if(session('success'))
         <div class="alert alert-success">
@@ -53,6 +49,37 @@
 
 @section('js')
     <script>
+        function updateBpm(bpm) {
+            // Cambiar visualmente el botón activo
+            document.querySelectorAll('.btn-group .btn').forEach(button => {
+                button.classList.remove('active');
+            });
+            document.querySelector(`[data-bpm="${bpm}"]`).classList.add('active');
+
+            // Enviar la actualización al servidor usando AJAX
+            fetch('{{ route('update.bpm') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ bpm })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al actualizar el BPM');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('BPM actualizado:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un error al actualizar el BPM.');
+            });
+        }
+
         function toggleScenario(scenarioId) {
             const button = document.querySelector(`.scenario-btn:nth-child(${scenarioId})`);
             const isEnabled = button.classList.contains('btn-primary');

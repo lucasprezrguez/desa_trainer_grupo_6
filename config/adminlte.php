@@ -63,9 +63,9 @@ return [
     |
     */
 
-    'logo' => null,
+    'logo' => true,
     'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-    'logo_img_class' => 'd-none',
+    'logo_img_class' => '',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
     'logo_img_alt' => 'Admin Logo',
@@ -192,7 +192,7 @@ return [
 
     'classes_body' => '',
     'classes_brand' => '',
-    'classes_brand_text' => '',
+    'classes_brand_text' => 'd-none',
     'classes_content_wrapper' => '',
     'classes_content_header' => '',
     'classes_content' => '',
