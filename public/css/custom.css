@@ -70,12 +70,16 @@ table.dataTable.table.table-hover>tbody>tr:hover>* {
 }
 
 /* Navbar styles */
+.navbar {
+    padding: 0;
+}
+
 .navbar-nav {
     gap: 10px;
 }
 
 .navbar-expand .navbar-collapse {
-    justify-content: center;
+    justify-content: end;
 }
 
 .navbar-no-expand {
@@ -83,19 +87,12 @@ table.dataTable.table.table-hover>tbody>tr:hover>* {
 }
 
 /* Nav link styles */
-
-.nav-item {
-    width: 100px;
-}
-
 .nav-link {
     display: flex;
     align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    padding: .8rem 1rem;
-    border-radius: 10px;
-    font-size: 12px;
+    padding: .75rem 1rem;
+    font-size: 14px;
+    gap: .75rem;
 }
 
 .nav-link:hover {

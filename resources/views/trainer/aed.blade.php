@@ -41,6 +41,35 @@
             border-radius: 5px;
         }
 
+        /* Botón de pantalla completa */
+        #fullscreen-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        #fullscreen-button:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+            transform: scale(1.05);
+        }
+
+        #fullscreen-button:active {
+            transform: scale(0.95);
+        }
+
         .crt {
             position: relative;
             overflow: hidden;
@@ -132,6 +161,28 @@
         easterEggClickCount: 0,
         isPaused: false, // Estado de pausa del escenario
         remainingTime: null, // Tiempo restante para reanudar el temporizador
+        isFullscreen: false, // Estado de pantalla completa
+        toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Error al intentar activar el modo de pantalla completa: ${err.message}`);
+                }).then(() => {
+                    this.isFullscreen = true;
+                    // En Android, ocultar la barra de navegación y la barra de estado
+                    if (typeof screen.orientation !== 'undefined') {
+                        screen.orientation.lock('landscape').catch(err => {
+                            console.log('Orientación de bloqueo no soportada', err);
+                        });
+                    }
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().then(() => {
+                        this.isFullscreen = false;
+                    });
+                }
+            }
+        },
         easterEggClick() {
             this.easterEggClickCount++;
             if (this.easterEggClickCount >= 7) {
@@ -297,6 +348,10 @@
         previousInstruction() {
             if (this.logCount > 0) {
                 this.logCount -= 1;
+                // Si estaba pausado, cambiamos a reproducción
+                if (this.isPaused) {
+                    this.isPaused = false;
+                }
                 this.logShockButtonPress();
             } else {
                 console.warn('No hay instrucciones anteriores.');
@@ -307,6 +362,7 @@
             if (this.isPaused) {
                 clearTimeout(this.timeoutId);
                 clearInterval(this.countdownInterval);
+                this.stopMetronome(); // Pausa el metrónomo cuando se pausa el escenario
                 console.log('Escenario pausado.');
             } else {
                 console.log('Escenario reanudado.');
@@ -321,11 +377,19 @@
                 } else {
                     this.logShockButtonPress();
                 }
+                // Reanudar el metrónomo solo si está en comprensiones (instrucción 4) y está habilitado
+                if (parseInt(this.currentInstruction?.instruction_id) === 4 && this.isMetronomeEnabled) {
+                    this.playMetronome();
+                }
             }
         },
         nextInstruction() {
             if (this.logCount < (this.scenarioInstructionSelected?.length || 0) - 1) {
                 this.logCount += 1;
+                // Si estaba pausado, cambiamos a reproducción
+                if (this.isPaused) {
+                    this.isPaused = false;
+                }
                 this.logShockButtonPress();
             } else {
                 console.warn('No hay más instrucciones.');
@@ -420,6 +484,10 @@
     if (bgImage.complete) updateBackgroundSize();
     speechSynthesis.cancel();" @resize.window="updateBackgroundSize()"
         class="w-screen h-screen flex justify-center items-center bg-neutral-800 relative">
+        <!-- Botón de pantalla completa -->
+        <button id="fullscreen-button" @click="toggleFullscreen" class="hover:bg-opacity-80 active:bg-opacity-100">
+            <i :class="isFullscreen ? 'ri-fullscreen-exit-line' : 'ri-fullscreen-line'" class="text-xl"></i>
+        </button>
         <!-- Spinner -->
         <div x-show="!isBackgroundLoaded" class="fixed inset-0 z-50 flex items-center justify-center bg-neutral-800">
             <div role="status">
@@ -453,7 +521,7 @@
                 <div class="flex flex-col items-center justify-evenly w-full h-full">
                     <!-- Botón superior en el marco negro -->
                     <button id="drawer-button" @click="drawerOpen = true" href=""
-                        class="text-center font-bold text-xs md:text-xl text-neutral-400 uppercase border-2 border-black rounded-md py-1 px-4"
+                        class="text-center font-bold text-xs md:text-xl text-neutral-400 uppercase border-2 border-black rounded-xl py-1 px-4"
                         type="button" data-drawer-target="drawer-scenarios" data-drawer-show="drawer-scenarios"
                         aria-controls="drawer-scenarios">
                         ELEGIR ENTRENAMIENTO
@@ -478,18 +546,18 @@
                         <!-- Controles multimedia -->
                         <div x-show="isOn && scenarioInstructionSelected" class="flex items-center justify-center w-full gap-2">
                             <!-- Botón de retroceder -->
-                            <button @click="previousInstruction" :disabled="logCount === 0" class="w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center text-white font-bold cursor-pointer transform active:scale-90"
+                            <button @click="previousInstruction" :disabled="logCount === 0" class="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-white font-bold cursor-pointer transform active:scale-90"
                                 :class="{ 'opacity-50 cursor-not-allowed': logCount === 0 }">
-                                <i class="ri-skip-back-mini-fill text-2xl md:text-4xl"></i>
+                                <i class="ri-skip-back-mini-fill text-xl md:text-2xl"></i>
                             </button>
                             <!-- Botón de pausa/reanudar -->
-                            <button @click="togglePause" class="bg-white w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center text-black font-bold cursor-pointer border-2 border-gray-700 transform active:scale-90">
-                                <i :class="isPaused ? 'ri-play-fill' : 'ri-pause-fill'" class="text-2xl md:text-4xl"></i>
+                            <button @click="togglePause" class="bg-white w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-black font-bold cursor-pointer border-2 border-gray-700 transform active:scale-90">
+                                <i :class="isPaused ? 'ri-play-fill' : 'ri-pause-fill'" class="text-xl md:text-2xl"></i>
                             </button>
                             <!-- Botón de avanzar -->
-                            <button @click="nextInstruction" :disabled="logCount >= (scenarioInstructionSelected?.length || 0) - 1" class="w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center text-white font-bold cursor-pointer  transform active:scale-90"
+                            <button @click="nextInstruction" :disabled="logCount >= (scenarioInstructionSelected?.length || 0) - 1" class="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-white font-bold cursor-pointer transform active:scale-90"
                                 :class="{ 'opacity-50 cursor-not-allowed': logCount >= (scenarioInstructionSelected?.length || 0) - 1 }">
-                                <i class="ri-skip-forward-mini-fill text-2xl md:text-4xl"></i>
+                                <i class="ri-skip-forward-mini-fill text-xl md:text-2xl"></i>
                             </button>
                         </div>
                     </div>
