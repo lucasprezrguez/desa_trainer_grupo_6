@@ -14,7 +14,8 @@ class Instruction extends Model
     protected $fillable = [
         'instruction_name',
         'require_action',
-        'waiting_time'
+        'waiting_time',
+        'additional_info'
     ];
 
     protected $casts = [

@@ -15,4 +15,8 @@
     <label for="waiting_time">Espera (s)</label>
     <input type="number" name="waiting_time" class="form-control" value="{{ $instruction->waiting_time }}" required>
 </div>
+<div class="form-group">
+    <label for="additional_info">Información Adicional</label>
+    <textarea id="additional_info" name="additional_info" class="form-control wysiwyg-editor">{{ $instruction->additional_info }}</textarea>
+</div>
 <p class="text-muted ml-2 mb-0">Por favor, asegúrate de que toda la información es correcta antes de guardar la instrucción.</p>

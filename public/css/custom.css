@@ -71,7 +71,7 @@ table.dataTable.table.table-hover>tbody>tr:hover>* {
 
 /* Navbar styles */
 .navbar {
-    padding: 0;
+    padding: .34rem;
 }
 
 .navbar-nav {
@@ -90,9 +90,10 @@ table.dataTable.table.table-hover>tbody>tr:hover>* {
 .nav-link {
     display: flex;
     align-items: center;
-    padding: .75rem 1rem;
+    padding: .34rem .67rem;
     font-size: 14px;
-    gap: .75rem;
+    gap: .67rem;
+    border-radius: .34rem;
 }
 
 .nav-link:hover {

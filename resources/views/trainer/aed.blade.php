@@ -153,6 +153,7 @@
         currentInstruction: null,
         screen: '',
         showImage: true,
+        hasAdditionalInfo: false,
         selectedScenarioId: 0,
         scenarioInstructionSelected: null,
         countdownInterval: null,
@@ -256,6 +257,12 @@
                 this.scenarioInstructionSelected = null; // Resetear el escenario
                 this.currentInstruction = null;
                 this.showImage = true;
+                this.hasAdditionalInfo = false; // Resetear la bandera de información adicional
+                
+                // Cerrar el modal si está abierto
+                if (this.showInfoModal) {
+                    this.showInfoModal = false;
+                }
     
                 console.log('🛑 Dispositivo apagado, escenario detenido.');
                 this.stopMetronome();
@@ -299,7 +306,14 @@
             }
     
             console.log(`Instrucción actual: `, this.currentInstruction);
-    
+            
+            // Comprobar si hay información adicional para esta instrucción
+            this.hasAdditionalInfo = this.currentInstruction.additional_info && this.currentInstruction.additional_info.trim() !== '';
+            
+            // Log para depuración
+            console.log('🔍 Información adicional:', this.hasAdditionalInfo ? 'Disponible' : 'No disponible');
+            console.log('🔍 Contenido:', this.currentInstruction.additional_info);
+            
             const utterance = new SpeechSynthesisUtterance(currentScenarioInstruction.params);
             speechSynthesis.cancel();
     
@@ -532,8 +546,18 @@
                             style="box-shadow: inset 0px 0px 3px 2px rgba(0,0,0,1);">
                             <img x-show="showImage" src="{{ asset('images/screen.png') }}" alt="Screen Content"
                                 class="object-contain max-w-full max-h-full">
-                            <div x-text="screen" class="text-base md:text-xl noto-sans-display"
+                            <div x-text="screen" class="text-base md:text-xl font-figtree"
                                 :class="{ 'text-red-500': currentInstruction?.require_action, 'p-2': screen !== '' }"></div>
+                            
+                            <!-- Enlace "Más información" -->
+                            <a 
+                                x-show="hasAdditionalInfo" 
+                                data-modal-target="additional-info-modal" 
+                                data-modal-toggle="additional-info-modal" 
+                                class="absolute bottom-10 text-center w-full text-blue-600 text-xs underline cursor-pointer hover:text-blue-800">
+                                Más información
+                            </a>
+                            
                             <div id="countdown-timer" class="font-mono text-xs"></div>
                             <div id="instruction-counter" class="font-mono text-xs" x-text="`${logCount + 1}/${scenarioInstructionSelected?.length || 0}`"></div>
                         </div>
@@ -678,4 +702,29 @@
                 </button>
             </form>
         </div>
+
+        <!-- Modal de información adicional con Flowbite -->
+        <div id="additional-info-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div class="relative p-4 w-full max-w-2xl max-h-full">
+                <!-- Modal content -->
+                <div class="relative bg-white rounded-lg shadow-sm">
+                    <!-- Modal header -->
+                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-900">
+                            Información Adicional
+                        </h3>
+                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="additional-info-modal">
+                            <i class="ri-close-line text-xl"></i>
+                            <span class="sr-only">Cerrar modal</span>
+                        </button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="p-4 md:p-5 space-y-4">
+                        <div class="prose prose-sm" x-html="currentInstruction?.additional_info"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+@endsection

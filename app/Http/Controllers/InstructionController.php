@@ -24,6 +24,7 @@ class InstructionController extends Controller
             'instruction_name' => 'required|string|max:255',
             'require_action' => 'required|boolean',
             'waiting_time' => 'required|integer',
+            'additional_info' => 'nullable',
         ]);
 
         Instruction::create($validated);
@@ -43,6 +44,7 @@ class InstructionController extends Controller
             'instruction_name' => 'required|string|max:255',
             'require_action' => 'required|boolean',
             'waiting_time' => 'required|integer',
+            'additional_info' => 'nullable',
         ]);
 
         $instruction = Instruction::findOrFail($instruction_id);

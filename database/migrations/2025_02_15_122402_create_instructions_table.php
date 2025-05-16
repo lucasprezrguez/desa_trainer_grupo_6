@@ -15,6 +15,7 @@ class CreateInstructionsTable extends Migration
             $table->string('instruction_name', 255); // Nombre de la instrucción
             $table->integer('waiting_time'); // Tiempo de espera en segundos
             $table->boolean('require_action'); // Indica si requiere acción del usuario
+            $table->longText('additional_info')->nullable(); // Información adicional WYSIWYG
             $table->timestamps(); // Columnas created_at y updated_at
         });
     }

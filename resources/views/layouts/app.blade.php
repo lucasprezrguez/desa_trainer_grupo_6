@@ -14,7 +14,6 @@
         <!-- Remix Icon -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.5.0/remixicon.min.css">
 
-    
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -24,9 +23,12 @@
         @stack('css')
     </head>
     <body class="font-sans antialiased">
+        <main>
+            @yield('content')
+        </main>
         
         @stack('modals')
-
         @livewireScripts
+        @stack('scripts')
     </body>
 </html>
