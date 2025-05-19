@@ -10,64 +10,9 @@
             transition: visibility 50ms ease-out;
         }
 
-        [drawer-backdrop] {
+        [drawer-backdrop],
+        [modal-backdrop] {
             backdrop-filter: blur(5px);
-        }
-
-        #countdown-timer {
-            display: none;
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-
-        #countdown-timer:before {
-            font-family: "remixicon";
-            content: "\f20e";
-            margin-right: 5px;
-            font-size: 10px;
-            font-weight: 100;
-            vertical-align: baseline;
-        }
-
-        #instruction-counter {
-            display: none;
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-
-        /* Botón de pantalla completa */
-        #fullscreen-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: rgba(0, 0, 0, 0.6);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            border: none;
-            transition: all 0.3s ease;
-        }
-
-        #fullscreen-button:hover {
-            background-color: rgba(0, 0, 0, 0.8);
-            transform: scale(1.05);
-        }
-
-        #fullscreen-button:active {
-            transform: scale(0.95);
         }
 
         .crt {
@@ -147,7 +92,7 @@
         isOn: false,
         metronomeBpm: {{ session('metronome_bpm', 110) }},
         backgroundImage: '{{ asset('images/device.png') }}',
-        logCount: 0, // Contador para el número de veces que se pulsa el botón de descarga
+        logCount: 0,
         scenarioInstruction: {{ $scenarioInstruction }},
         instructions: {{ $instructions }},
         currentInstruction: null,
@@ -160,21 +105,19 @@
         isBackgroundLoaded: false,
         isMetronomeEnabled: true,
         easterEggClickCount: 0,
-        isPaused: false, // Estado de pausa del escenario
-        remainingTime: null, // Tiempo restante para reanudar el temporizador
-        isFullscreen: false, // Estado de pantalla completa
+        isPaused: false,
+        remainingTime: null,
+        isFullscreen: false,
+        timeoutId: null,
+        showCountdown: false,
+        showCounter: false,
+
         toggleFullscreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
                     console.error(`Error al intentar activar el modo de pantalla completa: ${err.message}`);
                 }).then(() => {
                     this.isFullscreen = true;
-                    // En Android, ocultar la barra de navegación y la barra de estado
-                    if (typeof screen.orientation !== 'undefined') {
-                        screen.orientation.lock('landscape').catch(err => {
-                            console.log('Orientación de bloqueo no soportada', err);
-                        });
-                    }
                 });
             } else {
                 if (document.exitFullscreen) {
@@ -192,38 +135,31 @@
             }
         },
         selectScenario(id) {
-    
             this.selectedScenarioId = id;
             this.isOn = true;
             this.backgroundImage = this.isOn ? '{{ asset('images/device_pads.png') }}' : '{{ asset('images/device.png') }}';
             this.screen = '';
             this.logCount = 0;
-            $('#countdown-timer').hide();
-            $('#instruction-counter').hide(); // Ocultar el contador
-    
-    
-            // 🔴 Limpia cualquier temporizador anterior antes de comenzar
+            this.showCountdown = false;
+            this.showCounter = false;
+
             clearInterval(this.countdownInterval);
             this.countdownInterval = null;
-    
-            confirm('¿Estás seguro de que quieres empezar la simulación?');
-    
+
+            if (!confirm('¿Estás seguro de que quieres empezar la simulación?')) return;
+
             this.scenarioInstructionSelected = this.scenarioInstruction.filter(
                 scenario => scenario.scenario_id == this.selectedScenarioId
             );
-    
-            console.log('🔎 Filtradas Instrucciones:', this.scenarioInstructionSelected);
-    
+
             if (!this.scenarioInstructionSelected.length) {
-                console.error('⚠️ No se encontraron instrucciones para este escenario.');
                 return;
             }
-    
+
             this.$refs.closeButton.click();
-            console.log('✅ Selected scenario id: ', this.selectedScenarioId);
-    
-            this.stopMetronome(); // Stop metronome before starting a new scenario
-    
+
+            this.stopMetronome();
+
             const scenarioAnnouncement = new SpeechSynthesisUtterance(
                 this.selectedScenarioId > 8 ? 'El Escenario Personalizado va a comenzar.' : `El Escenario ${this.selectedScenarioId} va a comenzar.`
             );
@@ -237,120 +173,95 @@
             this.backgroundImage = this.isOn ? '{{ asset('images/device_pads.png') }}' : '{{ asset('images/device.png') }}';
             this.logCount = 0;
             this.screen = '';
-    
-            // Ocultar el contador al apagar el dispositivo
-            $('#countdown-timer').hide();
-            $('#instruction-counter').hide(); // Ocultar el contador
-    
+            this.showCountdown = false;
+            this.showCounter = false;
+
             if (!this.isOn) {
-                // 🔴 Apagado: Cancelar todo lo relacionado con el escenario
-                clearInterval(this.countdownInterval); // Detener la cuenta regresiva
+                clearInterval(this.countdownInterval);
                 this.countdownInterval = null;
-    
+
                 if (this.timeoutId) {
-                    clearTimeout(this.timeoutId); // Detener la ejecución automática de instrucciones
+                    clearTimeout(this.timeoutId);
                     this.timeoutId = null;
                 }
-    
-                speechSynthesis.cancel(); // Detener cualquier narración en curso
-    
-                this.scenarioInstructionSelected = null; // Resetear el escenario
+
+                speechSynthesis.cancel();
+
+                this.scenarioInstructionSelected = null;
                 this.currentInstruction = null;
                 this.showImage = true;
-                this.hasAdditionalInfo = false; // Resetear la bandera de información adicional
+                this.hasAdditionalInfo = false;
                 
-                // Cerrar el modal si está abierto
                 if (this.showInfoModal) {
                     this.showInfoModal = false;
                 }
-    
-                console.log('🛑 Dispositivo apagado, escenario detenido.');
+
                 this.stopMetronome();
             } else {
-                // 🔵 Encendido: Volver a iniciar desde cero si es necesario
-                console.log('✅ Dispositivo encendido.');
                 this.startLogging();
             }
         },
         logShockButtonPress() {
             if (!this.scenarioInstructionSelected || !this.scenarioInstructionSelected.length) {
-                console.error('❌ No hay instrucciones seleccionadas.');
                 return;
             }
-    
+
             if (this.logCount >= this.scenarioInstructionSelected.length) {
-                console.log('✅ Todas las instrucciones han sido ejecutadas.');
                 this.logCount = 0;
                 this.showImage = true;
                 this.togglePower();
                 return;
             }
-    
-            console.log('CONTADOR: ', this.logCount);
-            console.log('🔎 Instrucción actual:', this.scenarioInstructionSelected[this.logCount]);
-    
+
             const currentScenarioInstruction = this.scenarioInstructionSelected[this.logCount];
-    
+
             if (!currentScenarioInstruction) {
-                console.error(`⚠️ No hay instrucción en la posición ${this.logCount}`);
                 return;
             }
-    
+
             this.currentInstruction = this.instructions.find(
                 instruction => parseInt(instruction.instruction_id) === parseInt(currentScenarioInstruction.instruction_id)
             );
-    
+
             if (!this.currentInstruction) {
-                console.error(`⚠️ No se encontró la instrucción con ID ${currentScenarioInstruction.instruction_id}`);
                 return;
             }
-    
-            console.log(`Instrucción actual: `, this.currentInstruction);
             
-            // Comprobar si hay información adicional para esta instrucción
             this.hasAdditionalInfo = this.currentInstruction.additional_info && this.currentInstruction.additional_info.trim() !== '';
-            
-            // Log para depuración
-            console.log('🔍 Información adicional:', this.hasAdditionalInfo ? 'Disponible' : 'No disponible');
-            console.log('🔍 Contenido:', this.currentInstruction.additional_info);
             
             const utterance = new SpeechSynthesisUtterance(currentScenarioInstruction.params);
             speechSynthesis.cancel();
-    
-            // 🔴 Cancela cualquier temporizador pendiente antes de iniciar uno nuevo
+
             if (this.timeoutId) {
                 clearTimeout(this.timeoutId);
             }
-    
-            this.stopMetronome(); // Stop metronome before processing the next instruction
-    
+
+            this.stopMetronome();
+
             if (this.currentInstruction.require_action) {
                 this.showImage = false;
                 this.screen = currentScenarioInstruction.params;
-                $('#countdown-timer').hide();
-                $('#instruction-counter').hide();
+                this.showCountdown = false;
+                this.showCounter = false;
                 speechSynthesis.speak(utterance);
                 this.logCount += 1;
             } else {
-                console.log(`Esperando ${this.currentInstruction.waiting_time} segundos antes de avanzar...`);
                 this.showImage = false;
                 this.screen = currentScenarioInstruction.params;
                 speechSynthesis.speak(utterance);
-    
-                // Mostrar el contador cuando se empieza la cuenta regresiva
-                $('#countdown-timer').show();
-                $('#instruction-counter').show();
-    
+
+                this.showCountdown = true;
+                this.showCounter = true;
+
                 this.startCountdown(this.currentInstruction.waiting_time);
-    
-                // 🔴 Guarda el ID del temporizador para poder cancelarlo si es necesario
+
                 this.timeoutId = setTimeout(() => {
                     clearInterval(this.countdownInterval);
                     this.logCount += 1;
                     this.logShockButtonPress();
                 }, this.currentInstruction.waiting_time * 1000);
             }
-    
+
             if (parseInt(this.currentInstruction.instruction_id) === 4) {
                 if (this.isMetronomeEnabled) {
                     this.playMetronome();
@@ -362,13 +273,10 @@
         previousInstruction() {
             if (this.logCount > 0) {
                 this.logCount -= 1;
-                // Si estaba pausado, cambiamos a reproducción
                 if (this.isPaused) {
                     this.isPaused = false;
                 }
                 this.logShockButtonPress();
-            } else {
-                console.warn('No hay instrucciones anteriores.');
             }
         },
         togglePause() {
@@ -376,12 +284,9 @@
             if (this.isPaused) {
                 clearTimeout(this.timeoutId);
                 clearInterval(this.countdownInterval);
-                this.stopMetronome(); // Pausa el metrónomo cuando se pausa el escenario
-                console.log('Escenario pausado.');
+                this.stopMetronome();
             } else {
-                console.log('Escenario reanudado.');
                 if (this.currentInstruction && !this.currentInstruction.require_action) {
-                    // Reanudar el temporizador desde el tiempo restante
                     this.startCountdown(this.remainingTime);
                     this.timeoutId = setTimeout(() => {
                         clearInterval(this.countdownInterval);
@@ -391,7 +296,6 @@
                 } else {
                     this.logShockButtonPress();
                 }
-                // Reanudar el metrónomo solo si está en comprensiones (instrucción 4) y está habilitado
                 if (parseInt(this.currentInstruction?.instruction_id) === 4 && this.isMetronomeEnabled) {
                     this.playMetronome();
                 }
@@ -400,19 +304,15 @@
         nextInstruction() {
             if (this.logCount < (this.scenarioInstructionSelected?.length || 0) - 1) {
                 this.logCount += 1;
-                // Si estaba pausado, cambiamos a reproducción
                 if (this.isPaused) {
                     this.isPaused = false;
                 }
                 this.logShockButtonPress();
-            } else {
-                console.warn('No hay más instrucciones.');
             }
         },
         startCountdown(waitingTime) {
-            this.remainingTime = waitingTime; // Guardar el tiempo restante
+            this.remainingTime = waitingTime;
 
-            // Aseguramos que el temporizador anterior se limpie
             clearInterval(this.countdownInterval);
 
             $('#countdown-timer').text(this.formatTime(this.remainingTime));
@@ -464,10 +364,9 @@
                 oscillator.stop(audioContext.currentTime + 0.1);
             };
             
-            // Usa el BPM de la sesión
             this.metronomeInterval = setInterval(
                 metronomeSound, 
-                60000 / this.metronomeBpm // ¡Aquí aplicamos el BPM!
+                60000 / this.metronomeBpm
             );
         },
         stopMetronome() {
@@ -499,8 +398,10 @@
     speechSynthesis.cancel();" @resize.window="updateBackgroundSize()"
         class="w-screen h-screen flex justify-center items-center bg-neutral-800 relative">
         <!-- Botón de pantalla completa -->
-        <button id="fullscreen-button" @click="toggleFullscreen" class="hover:bg-opacity-80 active:bg-opacity-100">
+        <button id="fullscreen-button" @click="toggleFullscreen" 
+            class="fixed w-12 h-12 bottom-4 right-4 z-50 p-2.5 text-white bg-neutral-700 hover:bg-neutral-800 focus:ring-4 focus:ring-neutral-300 rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95">
             <i :class="isFullscreen ? 'ri-fullscreen-exit-line' : 'ri-fullscreen-line'" class="text-xl"></i>
+            <span class="sr-only">Pantalla completa</span>
         </button>
         <!-- Spinner -->
         <div x-show="!isBackgroundLoaded" class="fixed inset-0 z-50 flex items-center justify-center bg-neutral-800">
@@ -542,12 +443,12 @@
                     </button>
                     <!-- Contenido de la pantalla (Texto dinámico) -->
                     <div class="w-[80%] rounded-lg p-2 bg-black text-white flex flex-col justify-center relative">
-                        <div class="w-full aspect-[1.21] flex justify-center bg-white text-black text-2xl font-bold crt"
+                        <div class="w-full aspect-[1.21] flex justify-center items-center bg-white text-black text-2xl font-bold crt relative"
                             style="box-shadow: inset 0px 0px 3px 2px rgba(0,0,0,1);">
                             <img x-show="showImage" src="{{ asset('images/screen.png') }}" alt="Screen Content"
                                 class="object-contain max-w-full max-h-full">
-                            <div x-text="screen" class="text-base md:text-xl font-figtree"
-                                :class="{ 'text-red-500': currentInstruction?.require_action, 'p-2': screen !== '' }"></div>
+                            <div x-text="screen" class="text-base text-center md:text-xl font-figtree absolute inset-0 flex items-center justify-center"
+                                :class="{ 'text-[#FF5218]': currentInstruction?.require_action, 'p-2': screen !== '' }"></div>
                             
                             <!-- Enlace "Más información" -->
                             <a 
@@ -558,8 +459,8 @@
                                 Más información
                             </a>
                             
-                            <div id="countdown-timer" class="font-mono text-xs"></div>
-                            <div id="instruction-counter" class="font-mono text-xs" x-text="`${logCount + 1}/${scenarioInstructionSelected?.length || 0}`"></div>
+                            <div id="countdown-timer" x-show="showCountdown" class="absolute bottom-2.5 right-2.5 px-2.5 py-1.5 rounded text-black text-xs font-mono before:content-['\f20e'] before:font-['remixicon'] before:mr-1 before:text-[10px] before:font-thin before:align-baseline"></div>
+                            <div id="instruction-counter" x-show="showCounter" class="absolute bottom-2.5 left-2.5 px-2.5 py-1.5 rounded text-black text-xs font-mono" x-text="`${logCount + 1}/${scenarioInstructionSelected?.length || 0}`"></div>
                         </div>
                     </div>
                     <!-- Logo y controles multimedia -->
@@ -705,13 +606,15 @@
 
         <!-- Modal de información adicional con Flowbite -->
         <div id="additional-info-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-            <div class="relative p-4 w-full max-w-2xl max-h-full">
+            <!-- Modal backdrop -->
+            <div modal-backdrop class="fixed inset-0 bg-black/30"></div>
+            <div class="relative p-4 w-full max-w-lg max-h-full">
                 <!-- Modal content -->
                 <div class="relative bg-white rounded-lg shadow-sm">
                     <!-- Modal header -->
                     <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-200">
                         <h3 class="text-xl font-semibold text-gray-900">
-                            Información Adicional
+                            <span x-text="currentInstruction?.instruction_name"></span>
                         </h3>
                         <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="additional-info-modal">
                             <i class="ri-close-line text-xl"></i>
