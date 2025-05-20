@@ -27,7 +27,7 @@ class InstructionsSeeder extends Seeder
                 'waiting_time' => 15
             ],
             [
-                'instruction_name' => 'Iniciar RCP',
+                'instruction_name' => 'Reanimación Cardiopulmonar (RCP)',
                 'require_action' => false,
                 'waiting_time' => 120  
             ],

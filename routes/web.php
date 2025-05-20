@@ -5,7 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DESAController;
 use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\ScenarioController;
-use App\Http\Controllers\AdminController; // <- Añadir esta línea
+use App\Http\Controllers\AdminController;
 use App\Models\Scenario;
 use App\Http\Middleware\Roles;
 use App\Models\Instruction;
@@ -65,9 +65,12 @@ Route::middleware([
                 'destroy' => 'instructions.destroy',
             ]);
         
-        // Nueva rota para actualizar BPM
+        // Nueva ruta para actualizar BPM
         Route::post('update-bpm', [AdminController::class, 'updateBpm'])
             ->name('update.bpm');
+        // Nueva ruta para actualizar waiting_time de la instrucción
+        Route::post('update-waiting-time', [AdminController::class, 'updateWaitingTime'])
+            ->name('update.waiting_time');
     });
 
     Route::post('/admin/toggle-scenarios', [AdminController::class, 'toggleScenarios'])->name('toggle.scenarios');

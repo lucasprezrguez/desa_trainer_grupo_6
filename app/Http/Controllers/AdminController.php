@@ -10,7 +10,8 @@ class AdminController extends Controller
     public function dashboard()
     {
         $scenarios = Scenario::all(); // Obtener todos los escenarios
-        return view('admin.dashboard', compact('scenarios'));
+        $instructions = \App\Models\Instruction::all(); // Agregar instrucciones para el dashboard
+        return view('admin.dashboard', compact('scenarios', 'instructions'));
     }
 
     public function updateBpm(Request $request)
@@ -35,5 +36,17 @@ class AdminController extends Controller
         $scenario->update(['is_enabled' => $validated['is_enabled']]);
 
         return response()->json(['success' => true, 'scenario_id' => $scenario->scenario_id, 'is_enabled' => $scenario->is_enabled]);
+    }
+
+    public function updateWaitingTime(Request $request)
+    {
+        $validated = $request->validate([
+            'instruction_id' => 'required|exists:instructions,instruction_id',
+            'waiting_time' => 'required|integer|min:1',
+        ]);
+        $instruction = \App\Models\Instruction::findOrFail($validated['instruction_id']);
+        $instruction->waiting_time = $validated['waiting_time'];
+        $instruction->save();
+        return response()->json(['success' => true, 'instruction_id' => $instruction->instruction_id, 'waiting_time' => $instruction->waiting_time]);
     }
 }
