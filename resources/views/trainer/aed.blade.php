@@ -142,9 +142,15 @@
             this.logCount = 0;
             this.showCountdown = false;
             this.showCounter = false;
+            this.isPaused = false;
 
             clearInterval(this.countdownInterval);
             this.countdownInterval = null;
+
+            if (this.timeoutId) {
+                clearTimeout(this.timeoutId);
+                this.timeoutId = null;
+            }
 
             if (!confirm('¿Estás seguro de que quieres empezar la simulación?')) return;
 
@@ -244,10 +250,18 @@
                 this.showCountdown = false;
                 this.showCounter = false;
                 speechSynthesis.speak(utterance);
-                this.logCount += 1;
             } else {
                 this.showImage = false;
                 this.screen = currentScenarioInstruction.params;
+                
+                if (parseInt(this.currentInstruction.instruction_id) === 4) {
+                    utterance.onend = () => {
+                        if (this.isMetronomeEnabled) {
+                            this.playMetronome();
+                        }
+                    };
+                }
+                
                 speechSynthesis.speak(utterance);
 
                 this.showCountdown = true;
@@ -256,18 +270,20 @@
                 this.startCountdown(this.currentInstruction.waiting_time);
 
                 this.timeoutId = setTimeout(() => {
-                    clearInterval(this.countdownInterval);
-                    this.logCount += 1;
-                    this.logShockButtonPress();
+                    if (!this.isPaused) {
+                        clearInterval(this.countdownInterval);
+                        this.logCount += 1;
+                        this.logShockButtonPress();
+                    }
                 }, this.currentInstruction.waiting_time * 1000);
             }
 
-            if (parseInt(this.currentInstruction.instruction_id) === 4) {
-                if (this.isMetronomeEnabled) {
-                    this.playMetronome();
-                } else {
-                    this.stopMetronome();
-                }
+            if (parseInt(this.currentInstruction.instruction_id) === 4 && this.currentInstruction.require_action) {
+                utterance.onend = () => {
+                    if (this.isMetronomeEnabled) {
+                        this.playMetronome();
+                    }
+                };
             }
         },
         previousInstruction() {
@@ -289,12 +305,12 @@
                 if (this.currentInstruction && !this.currentInstruction.require_action) {
                     this.startCountdown(this.remainingTime);
                     this.timeoutId = setTimeout(() => {
-                        clearInterval(this.countdownInterval);
-                        this.logCount += 1;
-                        this.logShockButtonPress();
+                        if (!this.isPaused) {
+                            clearInterval(this.countdownInterval);
+                            this.logCount += 1;
+                            this.logShockButtonPress();
+                        }
                     }, this.remainingTime * 1000);
-                } else {
-                    this.logShockButtonPress();
                 }
                 if (parseInt(this.currentInstruction?.instruction_id) === 4 && this.isMetronomeEnabled) {
                     this.playMetronome();
@@ -317,10 +333,12 @@
 
             $('#countdown-timer').text(this.formatTime(this.remainingTime));
             this.countdownInterval = setInterval(() => {
-                this.remainingTime -= 1;
-                $('#countdown-timer').text(this.formatTime(this.remainingTime));
-                if (this.remainingTime <= 0) {
-                    clearInterval(this.countdownInterval);
+                if (!this.isPaused) {
+                    this.remainingTime -= 1;
+                    $('#countdown-timer').text(this.formatTime(this.remainingTime));
+                    if (this.remainingTime <= 0) {
+                        clearInterval(this.countdownInterval);
+                    }
                 }
             }, 1000);
         },
@@ -489,11 +507,28 @@
                 </div>
             </div>
             <!-- Botón de descarga -->
-            <button @click="logShockButtonPress" id="shock-button"
+            <button @click="() => { if (currentInstruction?.require_action) { logCount += 1; logShockButtonPress(); } }" id="shock-button"
                 class="w-24 h-24 md:w-32 md:h-32 flex items-center justify-center font-bold cursor-pointer mb-6 transform active:scale-90"
-                :class="{ 'animate-pulse': currentInstruction?.require_action }"
+                :class="{ 'animate-pulse drop-shadow-[0_0_8px_#fde68a]': currentInstruction?.require_action }"
                 :disabled="!currentInstruction?.require_action">
-                <img src="{{ asset('images/choque.svg') }}" alt="Shock Button" class="object-contain w-full h-full">
+                <svg version="1.0" xmlns="http://www.w3.org/2000/svg" class="w-full h-full" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet">
+                    <g class="fill-[#240000]" :class="{ 'stroke-amber-100 stroke-[8]': currentInstruction?.require_action, 'stroke-none stroke-0': !currentInstruction?.require_action }">
+                        <path d="M241 510.4 c-1.4 -0.2 -7.4 -1.1 -13.5 -2 -46 -6.7 -94.7 -32.5 -142.1 -75.4 -16.3 -14.8 -46.1 -47.9 -50.5 -56.2 -0.8 -1.4 8.6 -17.8 45.9 -80.1 56.5 -94.2 141.2 -235.6 162 -270.5 8.3 -13.9 15.3 -24.9 15.5 -24.5 2.7 4.7 85.9 145.9 129.9 220.8 31.1 52.8 64 108.8 73.2 124.4 l16.7 28.4 -2.4 3.4 c-1.3 1.8 -6.3 8.1 -11.1 13.8 -55.1 66.3 -113 105.1 -172.6 115.7 -11 1.9 -44.3 3.4 -51 2.2z m43.5 -13 c36.9 -5.4 74.9 -23.8 112.7 -54.6 18.2 -14.9 49.3 -46.9 63.1 -64.9 l2.7 -3.6 -74.1 -125.9 c-40.7 -69.2 -86.4 -146.8 -101.5 -172.4 -15 -25.6 -27.9 -47.3 -28.6 -48.2 -1.1 -1.6 -13.9 19.2 -105.3 171.9 -57.2 95.5 -104.2 174 -104.3 174.5 -0.6 1.4 18.5 23.5 32.8 37.8 52.5 52.7 108.7 82.3 166 87.4 7.1 0.6 25.6 -0.4 36.5 -2z"/>
+                    </g>
+                    <g fill="#ff3e19">
+                        <path d="M245 502.4 c-48.4 -4.4 -94.3 -25.3 -140.5 -63.9 -19.2 -16 -44.4 -42 -57.9 -59.8 l-2.9 -3.7 15.9 -26.5 c8.7 -14.6 16.2 -26.5 16.6 -26.5 1.4 0 0.8 5.9 -0.9 9.5 l-1.7 3.5 4.9 9.6 c29.5 58.4 86.2 98.3 152.9 107.9 37.7 5.4 77.1 -2.1 115.3 -22 35.3 -18.4 63.9 -47 83.9 -84 4.5 -8.4 4.8 -9.3 4.6 -15.8 -0.3 -6.1 -0.1 -6.8 1.5 -6.5 1.1 0.2 7.4 9.8 16.6 25.5 l14.9 25.3 -8.8 10.7 c-54.8 66.5 -114.2 106.1 -172.3 114.8 -10.6 1.6 -34 2.6 -42.1 1.9z"/>
+                        <path d="M209.8 432.3 c-1.3 -0.3 -1.8 -1.5 -1.8 -3.9 0 -1.9 0.5 -3.4 1 -3.4 0.6 0 1 -0.9 1 -2 0 -1.6 0.7 -2 3.4 -2 3.1 0 3.4 0.3 4 3.8 1.2 7.4 0.9 8.2 -2.6 8.1 -1.8 -0.1 -4.1 -0.3 -5 -0.6z"/>
+                        <path d="M428 315.4 c0 -4.5 2.5 -4.4 5.3 0.4 l1.9 3.2 -3.6 0 c-3.5 0 -3.6 -0.1 -3.6 -3.6z"/>
+                        <path d="M230 279.5 c0 -3.3 0.2 -3.5 3.5 -3.5 3.3 0 3.5 0.2 3.5 3.5 0 3.3 -0.2 3.5 -3.5 3.5 -3.3 0 -3.5 -0.2 -3.5 -3.5z"/>
+                        <path d="M286 73 c0 -1.3 -0.7 -2 -2 -2 -1.3 0 -2 -0.7 -2 -2 0 -1.1 -0.7 -2 -1.5 -2 -0.8 0 -1.5 -0.7 -1.5 -1.5 0 -0.8 -0.7 -1.5 -1.5 -1.5 -0.9 0 -1.5 -0.9 -1.5 -2.5 0 -2 -0.6 -2.5 -3.2 -2.9 -8.5 -1.3 -17.7 -1.7 -25.5 -1.1 -8.3 0.7 -8.6 0.8 -10.5 4.1 -1.4 2.4 -2.7 3.4 -4.4 3.4 -1.3 0 -2.4 -0.3 -2.4 -0.6 0 -0.3 6.2 -10.9 13.7 -23.5 10.4 -17.3 14 -22.6 14.9 -21.6 1.3 1.5 32.4 54.3 32.4 55.1 0 0.3 -1.1 0.6 -2.5 0.6 -1.8 0 -2.5 -0.5 -2.5 -2z"/>
+                    </g>
+                    <g fill="#ff5218">
+                        <path d="M241 457 c-64.2 -5.6 -119.8 -38 -154.1 -90 -3.9 -5.7 -9.5 -15.5 -12.5 -21.6 l-5.5 -11.2 3.2 -5.9 c4.9 -8.9 157.2 -263.1 160.8 -268.5 l3.1 -4.6 9.6 -0.7 c8.9 -0.7 23.7 -0.1 31.1 1.1 2.2 0.4 3 1 2.6 2 -0.3 0.8 0.1 1.4 1 1.4 0.8 0 2 0.7 2.7 1.5 0.9 1 0.9 1.5 0.1 1.5 -0.6 0 -1.1 0.5 -1.1 1 0 0.6 0.6 1 1.4 1 2.1 0 4 2.7 2.4 3.3 -0.9 0.4 -0.9 0.6 0.2 0.6 0.8 0.1 5.2 6.3 9.6 13.9 4.5 7.5 28.5 48.3 53.4 90.7 24.9 42.4 53.9 91.6 64.5 109.5 12.3 20.8 18.8 32.8 18.1 33.2 -0.7 0.5 -0.5 0.8 0.4 0.8 0.9 0 3 2.5 4.7 5.5 1.8 3 2.8 5.5 2.3 5.5 -0.5 0 -0.8 0.9 -0.7 2 0.1 1.2 0.8 2 1.9 2 1.8 0 3.3 1.6 2 2.2 -0.4 0.1 -3.4 5.6 -6.7 12.1 -24.3 49.1 -66.3 85.2 -119.6 102.6 -21.6 7.1 -53.3 11 -74.9 9.1z m9.6 -63.8 l-9.6 -0.3 0 -3 c0 -2 3.5 -9.5 9.9 -21.3 32.6 -59.8 51.3 -94.8 50.9 -95.1 -0.2 -0.3 -15 1.8 -32.8 4.6 -17.8 2.7 -33.8 4.9 -35.4 4.7 -2.7 -0.3 -3.1 -0.8 -3.4 -3.4 -0.3 -2.8 4.3 -9.2 38.4 -54 21.3 -28 39.1 -51.5 39.7 -52.1 0.7 -1 -3.8 -1.3 -21.9 -1.3 l-22.9 0 -6.7 15.3 c-3.7 8.3 -17.7 39.8 -31.2 70 l-24.4 54.7 5.6 0 c3.2 0 14.7 -0.7 25.7 -1.5 11 -0.8 20.8 -1.5 21.8 -1.5 3.2 0 1.9 6.9 -9 45.8 l-10.7 38.2 -11.6 0 -11.6 0 2.8 15.8 c1.5 8.6 3 16.7 3.3 17.9 0.5 2 2.8 0.3 21.6 -15.5 l21 -17.7 -9.5 -0.3z"/>
+                    </g>
+                    <g fill="#ffffff">
+                        <path d="M215.6 434.8 c-0.3 -0.7 -2.1 -10.3 -4.1 -21.3 -2 -11 -3.8 -20.8 -4.1 -21.7 -0.5 -1.7 0.5 -1.8 11.8 -1.8 l12.4 0 10.8 -38.6 c5.9 -21.2 10.7 -38.6 10.5 -38.8 -0.2 -0.2 -8.9 0.3 -19.4 1 -10.4 0.7 -23.4 1.5 -28.7 1.9 l-9.8 0.7 4.4 -9.9 c2.4 -5.4 13.9 -31.2 25.6 -57.3 11.6 -26.1 24.4 -54.8 28.3 -63.7 l7.1 -16.2 27.9 -0.3 c15.3 -0.2 28 -0.2 28.2 0 0.1 0.2 -18.6 25.1 -41.7 55.4 -23 30.3 -41.7 55.2 -41.5 55.5 0.3 0.2 17.4 -2.3 38.1 -5.5 20.7 -3.2 37.6 -5.5 37.6 -5 0 0.6 -28 52.6 -55.6 103.3 l-9.3 17 13.1 0.5 13 0.5 -24.3 20.5 c-13.4 11.3 -25.6 21.6 -27.1 22.8 -2.1 1.8 -2.9 2 -3.2 1z"/>
+                    </g>
+                </svg>
             </button>
         </div>
 
