@@ -23,4 +23,9 @@ class Scenario extends Model
                     ->withPivot('order', 'reps', 'params')
                     ->withTimestamps();
     }
+
+    public function progress()
+    {
+        return $this->hasMany(UserProgress::class, 'scenario_id', 'scenario_id');
+    }
 }

@@ -2,51 +2,80 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Scenario;
+use App\Models\UserProgress;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
     public function dashboard()
     {
-        $scenarios = Scenario::all(); // Obtener todos los escenarios
-        $instructions = \App\Models\Instruction::all(); // Agregar instrucciones para el dashboard
-        return view('admin.dashboard', compact('scenarios', 'instructions'));
+        // Get top 5 users by completed scenarios
+        $topUsers = User::withCount('progress')
+            ->orderByDesc('progress_count')
+            ->take(5)
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'name' => $user->name,
+                    'completed' => $user->progress_count
+                ];
+            });
+
+        // Get scenario completion statistics
+        $scenarioStats = Scenario::withCount('progress')
+            ->orderByDesc('progress_count')
+            ->get()
+            ->map(function ($scenario) {
+                return [
+                    'name' => $scenario->scenario_name,
+                    'completed' => $scenario->progress_count
+                ];
+            });
+
+        $scenarios = Scenario::all();
+        $instructions = \App\Models\Instruction::all();
+
+        return view('admin.dashboard', compact('topUsers', 'scenarioStats', 'scenarios', 'instructions'));
     }
 
     public function updateBpm(Request $request)
     {
-        $validated = $request->validate([
-            'bpm' => 'required|in:100,110,120'
+        $request->validate([
+            'bpm' => 'required|integer|in:100,110,120'
         ]);
 
         session(['metronome_bpm' => $request->bpm]);
-
-        return response()->json(['success' => true, 'bpm' => $request->bpm]);
-    }
-
-    public function toggleScenarios(Request $request)
-    {
-        $validated = $request->validate([
-            'scenario_id' => 'required|exists:scenarios,scenario_id',
-            'is_enabled' => 'required|boolean',
-        ]);
-
-        $scenario = Scenario::findOrFail($validated['scenario_id']);
-        $scenario->update(['is_enabled' => $validated['is_enabled']]);
-
-        return response()->json(['success' => true, 'scenario_id' => $scenario->scenario_id, 'is_enabled' => $scenario->is_enabled]);
+        return response()->json(['success' => true]);
     }
 
     public function updateWaitingTime(Request $request)
     {
-        $validated = $request->validate([
-            'instruction_id' => 'required|exists:instructions,instruction_id',
-            'waiting_time' => 'required|integer|min:1',
+        $request->validate([
+            'instruction_id' => 'required|integer',
+            'waiting_time' => 'required|integer|min:1'
         ]);
-        $instruction = \App\Models\Instruction::findOrFail($validated['instruction_id']);
-        $instruction->waiting_time = $validated['waiting_time'];
-        $instruction->save();
-        return response()->json(['success' => true, 'instruction_id' => $instruction->instruction_id, 'waiting_time' => $instruction->waiting_time]);
+
+        // Update the waiting time in the instructions table
+        \App\Models\Instruction::where('instruction_id', $request->instruction_id)
+            ->update(['waiting_time' => $request->waiting_time]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function toggleScenarios(Request $request)
+    {
+        $request->validate([
+            'scenario_id' => 'required|integer',
+            'is_enabled' => 'required|boolean'
+        ]);
+
+        $scenario = Scenario::findOrFail($request->scenario_id);
+        $scenario->is_enabled = $request->is_enabled;
+        $scenario->save();
+
+        return response()->json(['success' => true]);
     }
 }

@@ -81,4 +81,8 @@ Route::middleware([
         $scenarioInstruction = ScenarioInstruction::all();
         return view('/trainer/aed', compact('scenarios', 'scenarioInstruction', 'instructions'));
     })->name('trainer.aed');
+
+    Route::post('/record-completion', [DESAController::class, 'recordCompletion'])
+        ->name('record.completion')
+        ->middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']);
 });

@@ -53,6 +53,11 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
+    public function progress()
+    {
+        return $this->hasMany(UserProgress::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

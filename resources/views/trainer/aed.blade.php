@@ -193,6 +193,29 @@
 
                 speechSynthesis.cancel();
 
+                // Registrar la finalización del escenario cuando se apaga el dispositivo
+                if (this.scenarioInstructionSelected && this.scenarioInstructionSelected.length > 0) {
+                    fetch('{{ route('record.completion') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            scenario_id: this.selectedScenarioId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Progreso registrado exitosamente');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al registrar el progreso:', error);
+                    });
+                }
+
                 this.scenarioInstructionSelected = null;
                 this.currentInstruction = null;
                 this.showImage = true;
