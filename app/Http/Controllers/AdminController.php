@@ -13,14 +13,24 @@ class AdminController extends Controller
     public function dashboard()
     {
         // Get top 5 users by completed scenarios
-        $topUsers = User::withCount('progress')
+        $topUsers = User::with(['progress.scenario'])
+            ->withCount('progress')
             ->orderByDesc('progress_count')
             ->take(5)
             ->get()
             ->map(function ($user) {
+                $scenarioCounts = $user->progress->groupBy('scenario_id')
+                    ->map(function ($progresses) {
+                        return [
+                            'name' => $progresses->first()->scenario->scenario_name,
+                            'count' => $progresses->count()
+                        ];
+                    })->values();
+
                 return [
                     'name' => $user->name,
-                    'completed' => $user->progress_count
+                    'completed' => $user->progress_count,
+                    'scenarios' => $scenarioCounts
                 ];
             });
 

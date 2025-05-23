@@ -123,6 +123,24 @@
                 plugins: {
                     legend: {
                         display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const userIndex = context.dataIndex;
+                                const scenarios = {!! json_encode($topUsers->pluck('scenarios')) !!}[userIndex];
+                                const total = context.raw;
+                                
+                                const scenarioTexts = scenarios.map(scenario => 
+                                    `${scenario.name} (${scenario.count})`
+                                );
+                                
+                                return [
+                                    ...scenarioTexts,
+                                    `Total: ${total}`
+                                ];
+                            }
+                        }
                     }
                 },
                 scales: {
