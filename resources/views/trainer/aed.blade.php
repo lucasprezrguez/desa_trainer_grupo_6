@@ -89,29 +89,30 @@
         }
     </style>
     <div x-data="{
-        isOn: false,
-        metronomeBpm: {{ session('metronome_bpm', 110) }},
-        backgroundImage: '{{ asset('images/device.png') }}',
-        logCount: 0,
-        scenarioInstruction: {{ $scenarioInstruction }},
-        instructions: {{ $instructions }},
-        currentInstruction: null,
-        screen: '',
-        showImage: true,
-        hasAdditionalInfo: false,
-        selectedScenarioId: 0,
-        scenarioInstructionSelected: null,
-        countdownInterval: null,
-        isBackgroundLoaded: false,
-        isMetronomeEnabled: true,
-        easterEggClickCount: 0,
-        isPaused: false,
-        remainingTime: null,
-        isFullscreen: false,
-        timeoutId: null,
-        showCountdown: false,
-        showCounter: false,
+        isOn: false, // Estado de encendido/apagado del dispositivo
+        metronomeBpm: {{ session('metronome_bpm', 110) }}, // BPM del metrónomo, configurable por sesión
+        backgroundImage: '{{ asset('images/device.png') }}', // Imagen de fondo del dispositivo
+        logCount: 0, // Contador de instrucciones ejecutadas
+        scenarioInstruction: {{ $scenarioInstruction }}, // Instrucciones del escenario actual
+        instructions: {{ $instructions }}, // Lista de todas las instrucciones
+        currentInstruction: null, // Instrucción actual mostrada en pantalla
+        screen: '', // Texto mostrado en la pantalla del dispositivo
+        showImage: true, // Controla si se muestra la imagen de la pantalla
+        hasAdditionalInfo: false, // Indica si la instrucción actual tiene información adicional
+        selectedScenarioId: 0, // ID del escenario seleccionado
+        scenarioInstructionSelected: null, // Instrucciones filtradas del escenario seleccionado
+        countdownInterval: null, // Intervalo para el temporizador de cuenta regresiva
+        isBackgroundLoaded: false, // Indica si la imagen de fondo ya cargó
+        isMetronomeEnabled: true, // Habilita o deshabilita el metrónomo
+        easterEggClickCount: 0, // Contador de clicks para el easter egg
+        isPaused: false, // Indica si la simulación está pausada
+        remainingTime: null, // Tiempo restante para la cuenta regresiva
+        isFullscreen: false, // Indica si está en modo pantalla completa
+        timeoutId: null, // ID del timeout para avanzar instrucciones automáticamente
+        showCountdown: false, // Controla la visibilidad del temporizador
+        showCounter: false, // Controla la visibilidad del contador de instrucciones
 
+        // Alterna el modo de pantalla completa
         toggleFullscreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
@@ -127,6 +128,7 @@
                 }
             }
         },
+        // Maneja el easter egg al hacer click en el logo
         easterEggClick() {
             this.easterEggClickCount++;
             if (this.easterEggClickCount >= 7) {
@@ -134,6 +136,7 @@
                 this.easterEggClickCount = 0;
             }
         },
+        // Selecciona un escenario y lo inicializa
         selectScenario(id) {
             this.selectedScenarioId = id;
             this.isOn = true;
@@ -154,6 +157,7 @@
 
             if (!confirm('¿Estás seguro de que quieres empezar la simulación?')) return;
 
+            // Filtra las instrucciones del escenario seleccionado
             this.scenarioInstructionSelected = this.scenarioInstruction.filter(
                 scenario => scenario.scenario_id == this.selectedScenarioId
             );
@@ -162,10 +166,13 @@
                 return;
             }
 
+            // Cierra el drawer de selección
             this.$refs.closeButton.click();
 
+            // Detiene el metrónomo si estaba activo
             this.stopMetronome();
 
+            // Anuncia el inicio del escenario por voz
             const scenarioAnnouncement = new SpeechSynthesisUtterance(
                 this.selectedScenarioId > 8 ? 'El Escenario Personalizado va a comenzar.' : `El Escenario ${this.selectedScenarioId} va a comenzar.`
             );
@@ -174,6 +181,7 @@
             };
             speechSynthesis.speak(scenarioAnnouncement);
         },
+        // Alterna el encendido/apagado del dispositivo
         togglePower() {
             this.isOn = !this.isOn;
             this.backgroundImage = this.isOn ? '{{ asset('images/device_pads.png') }}' : '{{ asset('images/device.png') }}';
@@ -230,6 +238,7 @@
                 this.startLogging();
             }
         },
+        // Avanza a la siguiente instrucción o termina el escenario
         logShockButtonPress() {
             if (!this.scenarioInstructionSelected || !this.scenarioInstructionSelected.length) {
                 return;
@@ -242,12 +251,14 @@
                 return;
             }
 
+            // Obtiene la instrucción actual del escenario
             const currentScenarioInstruction = this.scenarioInstructionSelected[this.logCount];
 
             if (!currentScenarioInstruction) {
                 return;
             }
 
+            // Busca el detalle de la instrucción
             this.currentInstruction = this.instructions.find(
                 instruction => parseInt(instruction.instruction_id) === parseInt(currentScenarioInstruction.instruction_id)
             );
@@ -256,8 +267,10 @@
                 return;
             }
             
+            // Verifica si hay información adicional
             this.hasAdditionalInfo = this.currentInstruction.additional_info && this.currentInstruction.additional_info.trim() !== '';
             
+            // Prepara el texto a leer por voz
             const utterance = new SpeechSynthesisUtterance(currentScenarioInstruction.params);
             speechSynthesis.cancel();
 
@@ -267,6 +280,7 @@
 
             this.stopMetronome();
 
+            // Si la instrucción requiere acción, espera la interacción del usuario
             if (this.currentInstruction.require_action) {
                 this.showImage = false;
                 this.screen = currentScenarioInstruction.params;
@@ -274,6 +288,7 @@
                 this.showCounter = false;
                 speechSynthesis.speak(utterance);
             } else {
+                // Si no requiere acción, inicia cuenta regresiva y avanza automáticamente
                 this.showImage = false;
                 this.screen = currentScenarioInstruction.params;
                 
@@ -301,6 +316,7 @@
                 }, this.currentInstruction.waiting_time * 1000);
             }
 
+            // Si la instrucción es la de RCP y requiere acción, inicia metrónomo al terminar la voz
             if (parseInt(this.currentInstruction.instruction_id) === 4 && this.currentInstruction.require_action) {
                 utterance.onend = () => {
                     if (this.isMetronomeEnabled) {
@@ -309,6 +325,7 @@
                 };
             }
         },
+        // Retrocede a la instrucción anterior
         previousInstruction() {
             if (this.logCount > 0) {
                 this.logCount -= 1;
@@ -318,6 +335,7 @@
                 this.logShockButtonPress();
             }
         },
+        // Pausa o reanuda la simulación
         togglePause() {
             this.isPaused = !this.isPaused;
             if (this.isPaused) {
@@ -340,6 +358,7 @@
                 }
             }
         },
+        // Avanza a la siguiente instrucción
         nextInstruction() {
             if (this.logCount < (this.scenarioInstructionSelected?.length || 0) - 1) {
                 this.logCount += 1;
@@ -349,6 +368,7 @@
                 this.logShockButtonPress();
             }
         },
+        // Inicia la cuenta regresiva para instrucciones automáticas
         startCountdown(waitingTime) {
             this.remainingTime = waitingTime;
 
@@ -365,11 +385,13 @@
                 }
             }, 1000);
         },
+        // Formatea el tiempo en mm:ss
         formatTime(seconds) {
             const minutes = Math.floor(seconds / 60);
             const remainingSeconds = seconds % 60;
             return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
         },
+        // Ajusta el tamaño del fondo según la imagen
         updateBackgroundSize() {
             this.$nextTick(() => {
                 const backgroundImage = document.getElementById('background-image');
@@ -389,6 +411,7 @@
                 }, 2000);
             });
         },
+        // Inicia el metrónomo (sonido)
         playMetronome() {
             if (this.metronomeInterval) clearInterval(this.metronomeInterval);
             
@@ -410,13 +433,16 @@
                 60000 / this.metronomeBpm
             );
         },
+        // Detiene el metrónomo
         stopMetronome() {
             if (this.metronomeInterval) {
                 clearInterval(this.metronomeInterval);
                 this.metronomeInterval = null;
             }
         },
+        // Observadores reactivos para cambios de estado
         watch: {
+            // Si se habilita/deshabilita el metrónomo
             isMetronomeEnabled(newValue) {
                 if (newValue) {
                     this.playMetronome();
@@ -424,6 +450,7 @@
                     this.stopMetronome();
                 }
             },
+            // Si cambia la instrucción actual y es de compresiones, controla el metrónomo
             currentInstruction(newValue) {
                 if (parseInt(newValue?.instruction_id) === 4) {
                     if (this.isMetronomeEnabled) {
@@ -666,7 +693,7 @@
         <div id="additional-info-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <!-- Modal backdrop -->
             <div modal-backdrop class="fixed inset-0 bg-black/30"></div>
-            <div class="relative p-4 w-full max-w-lg max-h-full">
+            <div class="relative p-4 w-full max-w-2xl max-h-full">
                 <!-- Modal content -->
                 <div class="relative bg-white rounded-lg shadow-sm">
                     <!-- Modal header -->

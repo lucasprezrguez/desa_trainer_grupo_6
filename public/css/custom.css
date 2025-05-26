@@ -25,6 +25,7 @@
 .table {
     border: 1px solid #e5e7eb;
 }
+
 table.dataTable.table.table-hover>tbody>tr:hover>* {
     box-shadow: none;
 }
@@ -192,22 +193,41 @@ table.dataTable.table.table-hover>tbody>tr:hover>* {
     transition: opacity 0.3s ease;
 }
 
-.wait-cursor, .wait-cursor * {
+.wait-cursor,
+.wait-cursor * {
     cursor: wait !important;
 }
 
 .btn-group .btn {
-        flex: 1 1 auto;
-    }
-    .btn.active {
-        background-color: #0d6efd;
-        color: white;
-        border-color: #0d6efd;
-    }
-    .scenario-btn {
-        padding: .5rem 1rem !important;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px !important;
-    }
+    flex: 1 1 auto;
+}
+
+.btn.active {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
+
+.scenario-btn {
+    padding: .5rem 1rem !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px !important;
+}
+
+.card {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    border: 1px solid rgba(0,0,0,.125) !important;
+}
+
+.card-header {
+    background-color: #f9fafb !important;
+}
+
+.card-title {
+        text-transform: uppercase;
+    font-size: .8rem !important;
+    font-weight: 700 !important;
+}
